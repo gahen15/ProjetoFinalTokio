@@ -1,34 +1,34 @@
 package br.com.fiap.models.implement;
 
 public class SeguroPessoaFisicaIndividual implements Seguro {
-    private int idTipoSeguro;
-    private String descricao;
-    private String categoria;
+	private long idTipoSeguro;
+	private String descricao;
+	private String categoria;
 
-    public SeguroPessoaFisicaIndividual(int idTipoSeguro, String descricao, String categoria) {
-        this.idTipoSeguro = idTipoSeguro;
-        this.descricao = descricao;
-        this.categoria = categoria;
-    }
+	public SeguroPessoaFisicaIndividual() {
+		this.idTipoSeguro = 1;
+		this.descricao = "";
+		this.categoria = "Pessoa Física";
+	}
 
-    @Override
-    public int getIdTipoSeguro() {
-        return idTipoSeguro;
-    }
+	@Override
+	public long getIdTipoSeguro() {
+		return idTipoSeguro;
+	}
 
-    @Override
-    public String getDescricao() {
-        return descricao;
-    }
+	@Override
+	public String getDescricao() {
+		return descricao;
+	}
 
-    @Override
-    public String getCategoria() {
-        return categoria;
-    }
+	@Override
+	public String getCategoria() {
+		return categoria;
+	}
 
-    @Override
-    public void calcularPremio() {
-        // Implementação específica do cálculo para Seguro Individual
-        System.out.println("Calculando prêmio para Seguro Individual...");
-    }
+	@Override
+	public void calcularPremio() {
+		// Implementação específica do cálculo para Seguro Estagiário
+		System.out.println("Calculando prêmio para Seguro Estagiário...");
+	}
 }

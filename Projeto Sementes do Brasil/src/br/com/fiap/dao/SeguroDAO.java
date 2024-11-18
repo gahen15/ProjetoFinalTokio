@@ -34,7 +34,7 @@ public class SeguroDAO {
 
         try (PreparedStatement stmt = connection.prepareStatement(sql)) {
             stmt.setLong(1, idCliente);
-            stmt.setInt(2, seguro.getIdTipoSeguro());  
+            stmt.setLong(2, seguro.getIdTipoSeguro());  
 
             stmt.executeUpdate();
         } catch (SQLException e) {
@@ -71,14 +71,14 @@ public class SeguroDAO {
     }
 
    
-    public void listarClientesPorTipoSeguro(int idTipoSeguro) {
+    public void listarClientesPorTipoSeguro(long idTipoSeguro) {
         String sql = "SELECT c.idCliente, c.nome, c.email " +
                      "FROM T_Cliente c " +
                      "INNER JOIN ClienteSeguro cs ON c.idCliente = cs.idCliente " +
                      "WHERE cs.idTipoSeguro = ?";
 
         try (PreparedStatement stmt = connection.prepareStatement(sql)) {
-            stmt.setInt(1, idTipoSeguro);
+            stmt.setLong(1, idTipoSeguro);
 
             try (ResultSet rs = stmt.executeQuery()) {
                 while (rs.next()) {
@@ -103,7 +103,7 @@ public class SeguroDAO {
 
         try (PreparedStatement stmt = connection.prepareStatement(sql)) {
             stmt.setLong(1, idCliente);
-            stmt.setInt(2, seguro.getIdTipoSeguro());  
+            stmt.setLong(2, seguro.getIdTipoSeguro());  
 
             stmt.executeUpdate();
         } catch (SQLException e) {

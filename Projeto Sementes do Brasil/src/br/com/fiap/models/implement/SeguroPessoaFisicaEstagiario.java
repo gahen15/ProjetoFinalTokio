@@ -1,18 +1,18 @@
 package br.com.fiap.models.implement;
 
 public class SeguroPessoaFisicaEstagiario implements Seguro {
-    private int idTipoSeguro;
+    private long idTipoSeguro;
     private String descricao;
     private String categoria;
 
-    public SeguroPessoaFisicaEstagiario(int idTipoSeguro, String descricao, String categoria) {
-        this.idTipoSeguro = idTipoSeguro;
-        this.descricao = descricao;
-        this.categoria = categoria;
-    }
+	public SeguroPessoaFisicaEstagiario() {
+		this.idTipoSeguro = 2;
+		this.descricao = "";
+		this.categoria = "Pessoa Física";
+	}
 
     @Override
-    public int getIdTipoSeguro() {
+    public long getIdTipoSeguro() {
         return idTipoSeguro;
     }
 

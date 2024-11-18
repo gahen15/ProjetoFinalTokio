@@ -7,10 +7,10 @@ import java.sql.SQLException;
 public class ConnectionFactory {
 	
 	
-	private static final String url = "jdbc:oracle:thin:@localhost:1521/XEPDB1";
+	private static final String url = "jdbc:oracle:thin:@oracle.fiap.com.br:1521:ORCL";
 
-	private static final String user = "GAHEN";
-	private static final String password = "bielgamers12";
+	private static final String user = "tm06";
+	private static final String password = "11052007";
 	
 	
 	
