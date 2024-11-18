@@ -1,0 +1,19 @@
+-- Remover as triggers associadas às tabelas
+DROP TRIGGER trg_cliente;
+
+-- Remover as sequências
+DROP SEQUENCE seq_cliente;
+
+-- Remover a tabela de relacionamento ClienteSeguro
+DROP TABLE ClienteSeguro CASCADE CONSTRAINTS;
+
+-- Remover a tabela TipoSeguro
+DROP TABLE TipoSeguro CASCADE CONSTRAINTS;
+
+-- Remover as tabelas dependentes (caso exista alguma dependência)
+DROP TABLE T_PessoaFisica CASCADE CONSTRAINTS;
+DROP TABLE T_Empresa CASCADE CONSTRAINTS;
+
+-- Remover a tabela principal de clientes
+DROP TABLE T_Cliente CASCADE CONSTRAINTS;
+
