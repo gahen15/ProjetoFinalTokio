@@ -14,12 +14,15 @@ import javax.swing.JButton;
 import java.awt.event.ActionListener;
 import java.awt.event.ActionEvent;
 import javax.swing.SwingConstants;
+import javax.swing.AbstractAction;
+import javax.swing.Action;
 
 public class Login {
 
 	private JFrame frame;
 	private JTextField textField;
 	private JPasswordField passwordField;
+	private final Action action = new SwingAction();
 
 	/**
 	 * Launch the application.
@@ -78,6 +81,7 @@ public class Login {
 		frame.getContentPane().add(lblNewLabel_1);
 		
 		JButton btnNewButton = new JButton("Logar");
+		btnNewButton.setAction(action);
 		btnNewButton.setBounds(178, 213, 76, 23);
 		frame.getContentPane().add(btnNewButton);
 		
@@ -85,9 +89,21 @@ public class Login {
 		btnNewButton_1.setIcon(new ImageIcon(Login.class.getResource("/resources/shutdown-1.png")));
 		btnNewButton_1.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
+			frame.dispose();
 			}
 		});
 		btnNewButton_1.setBounds(393, 220, 31, 30);
 		frame.getContentPane().add(btnNewButton_1);
+	}
+	private class SwingAction extends AbstractAction {
+		public SwingAction() {
+			putValue(NAME, "Logar");
+			putValue(SHORT_DESCRIPTION, "Some short description");
+		}
+		public void actionPerformed(ActionEvent e) {
+		frame.dispose();
+		new Main();
+			
+		}
 	}
 }
