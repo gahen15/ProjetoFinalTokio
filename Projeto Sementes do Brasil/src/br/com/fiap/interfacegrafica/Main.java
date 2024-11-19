@@ -39,6 +39,7 @@ public class Main {
      */
     public Main() {
         initialize();
+        frame.setVisible(true);
     }
 
     /**
