@@ -12,18 +12,36 @@ import java.awt.image.BufferedImage;
 import java.io.IOException;
 
 import javax.imageio.ImageIO;
+import javax.swing.ButtonGroup;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
+import javax.swing.JRadioButton;
 import javax.swing.JScrollPane;
+import javax.swing.JTextField;
+import java.awt.Button;
 
 public class Main {
 
     private JFrame frame;
     private JPanel contentPanel; // Painel para o conteúdo da direita
     private CardLayout cardLayout; // Layout para trocar os painéis à direita
+    private JTextField nomeField;
+    private JTextField emailField;
+    private JTextField telefoneField;
+    private JTextField enderecoField;
+    private JTextField cpfField;
+    private JTextField profissaoField;
+    private JTextField dataField;
+    private JTextField nomeFieldJuridica;
+    private JTextField nomeFantasiaFieldJuridica;
+    private JTextField cnpjFieldJuridica;
+    private JTextField telefoneFieldJuridica;
+    private JTextField emailFieldJuridica;
+    private JTextField enderecoFieldJuridica;
+    private JTextField razaoSocialFieldJuridica;
 
     /**
      * Launch the application.
@@ -140,11 +158,86 @@ public class Main {
         painelCadastroJuridico.setLayout(null);
 
         // Defina um tamanho maior para o painel dentro do JScrollPane
-        painelCadastroJuridico.setPreferredSize(new Dimension(910, 800)); // Ajuste o tamanho conforme necessário
+        painelCadastroJuridico.setPreferredSize(new Dimension(910, 650)); // Ajuste o tamanho conforme necessário
         painelCadastroJuridico.setBounds(50, 101, 910, 537);
 
         // Envolver o painel de cadastro jurídico com JScrollPane (somente vertical)
         JScrollPane scrollCadastroJuridica = new JScrollPane(painelCadastroJuridico, JScrollPane.VERTICAL_SCROLLBAR_ALWAYS, JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
+        
+        JLabel nomeLabel_1 = new JLabel("Nome Completo");
+        nomeLabel_1.setBounds(10, 21, 841, 30);
+        painelCadastroJuridico.add(nomeLabel_1);
+        nomeLabel_1.setFont(new Font("Segoe UI", Font.BOLD, 28));
+        
+        nomeFieldJuridica = new JTextField();
+        nomeFieldJuridica.setBounds(10, 51, 841, 30);
+        painelCadastroJuridico.add(nomeFieldJuridica);
+        nomeFieldJuridica.setFont(new Font("Tahoma", Font.PLAIN, 12));
+        nomeFieldJuridica.setColumns(10);
+        
+        JLabel lblNomeFantasia = new JLabel("Nome Fantasia");
+        lblNomeFantasia.setBounds(10, 389, 569, 38);
+        painelCadastroJuridico.add(lblNomeFantasia);
+        lblNomeFantasia.setFont(new Font("Segoe UI", Font.BOLD, 28));
+        
+        nomeFantasiaFieldJuridica = new JTextField();
+        nomeFantasiaFieldJuridica.setBounds(10, 424, 841, 30);
+        painelCadastroJuridico.add(nomeFantasiaFieldJuridica);
+        nomeFantasiaFieldJuridica.setColumns(10);
+        
+        JLabel lblCPF_1 = new JLabel("CNPJ");
+        lblCPF_1.setBounds(10, 315, 569, 38);
+        painelCadastroJuridico.add(lblCPF_1);
+        lblCPF_1.setFont(new Font("Segoe UI", Font.BOLD, 28));
+        
+        cnpjFieldJuridica = new JTextField();
+        cnpjFieldJuridica.setBounds(10, 350, 841, 30);
+        painelCadastroJuridico.add(cnpjFieldJuridica);
+        cnpjFieldJuridica.setColumns(10);
+        
+        JLabel lblTelefone_1 = new JLabel("Telefone");
+        lblTelefone_1.setBounds(10, 240, 569, 38);
+        painelCadastroJuridico.add(lblTelefone_1);
+        lblTelefone_1.setFont(new Font("Segoe UI", Font.BOLD, 28));
+        
+        telefoneFieldJuridica = new JTextField();
+        telefoneFieldJuridica.setBounds(10, 274, 841, 30);
+        painelCadastroJuridico.add(telefoneFieldJuridica);
+        telefoneFieldJuridica.setColumns(10);
+        
+        JLabel lblEmail_1 = new JLabel("E-mail");
+        lblEmail_1.setBounds(10, 89, 569, 38);
+        painelCadastroJuridico.add(lblEmail_1);
+        lblEmail_1.setFont(new Font("Segoe UI", Font.BOLD, 28));
+        
+        emailFieldJuridica = new JTextField();
+        emailFieldJuridica.setBounds(10, 125, 841, 30);
+        painelCadastroJuridico.add(emailFieldJuridica);
+        emailFieldJuridica.setColumns(10);
+        
+        JLabel lblEndereo_1 = new JLabel("Endereço");
+        lblEndereo_1.setBounds(10, 166, 569, 38);
+        painelCadastroJuridico.add(lblEndereo_1);
+        lblEndereo_1.setFont(new Font("Segoe UI", Font.BOLD, 28));
+        
+        enderecoFieldJuridica = new JTextField();
+        enderecoFieldJuridica.setBounds(10, 204, 841, 30);
+        painelCadastroJuridico.add(enderecoFieldJuridica);
+        enderecoFieldJuridica.setColumns(10);
+        
+        JLabel lblRazaoSocialJuridic = new JLabel("Razão Social");
+        lblRazaoSocialJuridic.setBounds(10, 465, 569, 38);
+        painelCadastroJuridico.add(lblRazaoSocialJuridic);
+        lblRazaoSocialJuridic.setFont(new Font("Segoe UI", Font.BOLD, 28));
+        
+        razaoSocialFieldJuridica = new JTextField();
+        razaoSocialFieldJuridica.setBounds(10, 501, 841, 30);
+        painelCadastroJuridico.add(razaoSocialFieldJuridica);
+        razaoSocialFieldJuridica.setColumns(10);
+        
+        JButton cadastrarJuridicoButton = new JButton("Cadastrar");
+        cadastrarJuridicoButton.setBounds(748, 560, 103, 23);
+        painelCadastroJuridico.add(cadastrarJuridicoButton);
         scrollCadastroJuridica.setBounds(50, 101, 910, 537);
         cadastroJuridicaPanel.add(scrollCadastroJuridica);
 
@@ -154,11 +247,82 @@ public class Main {
         painelCadastroFisico.setLayout(null);
 
         // Defina um tamanho maior para o painel dentro do JScrollPane
-        painelCadastroFisico.setPreferredSize(new Dimension(910, 800)); // Ajuste o tamanho conforme necessário
+        painelCadastroFisico.setPreferredSize(new Dimension(910, 650)); // Ajuste o tamanho conforme necessário
         painelCadastroFisico.setBounds(50, 101, 910, 537);
 
         // Envolver o painel de cadastro físico com JScrollPane (somente vertical)
         JScrollPane scrollCadastroFisica = new JScrollPane(painelCadastroFisico, JScrollPane.VERTICAL_SCROLLBAR_ALWAYS, JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
+        
+        nomeField = new JTextField();
+        nomeField.setFont(new Font("Tahoma", Font.PLAIN, 12));
+        nomeField.setBounds(10, 48, 841, 30);
+        painelCadastroFisico.add(nomeField);
+        nomeField.setColumns(10);
+        
+        emailField = new JTextField();
+        emailField.setColumns(10);
+        emailField.setBounds(10, 348, 841, 30);
+        painelCadastroFisico.add(emailField);
+        
+        telefoneField = new JTextField();
+        telefoneField.setColumns(10);
+        telefoneField.setBounds(10, 274, 841, 30);
+        painelCadastroFisico.add(telefoneField);
+        
+        enderecoField = new JTextField();
+        enderecoField.setColumns(10);
+        enderecoField.setBounds(10, 427, 841, 30);
+        painelCadastroFisico.add(enderecoField);
+        
+        cpfField = new JTextField();
+        cpfField.setColumns(10);
+        cpfField.setBounds(10, 200, 841, 30);
+        painelCadastroFisico.add(cpfField);
+        
+        profissaoField = new JTextField();
+        profissaoField.setColumns(10);
+        profissaoField.setBounds(10, 500, 841, 30);
+        painelCadastroFisico.add(profissaoField);
+        
+        JRadioButton solteiroButton = new JRadioButton("Solteiro(a)");
+        solteiroButton.setBounds(10, 567, 91, 23);
+        painelCadastroFisico.add(solteiroButton);
+        
+        JRadioButton casadoButton = new JRadioButton("Casado(a)");
+        casadoButton.setBounds(99, 567, 91, 23);
+        painelCadastroFisico.add(casadoButton);
+        
+        JRadioButton viuvoButton = new JRadioButton("Viúvo(a)");
+        viuvoButton.setBounds(192, 567, 83, 23);
+        painelCadastroFisico.add(viuvoButton);
+        
+        JRadioButton separadoButton = new JRadioButton("Separado(a) Judicialmente");
+        separadoButton.setBounds(277, 567, 181, 23);
+        painelCadastroFisico.add(separadoButton);
+        
+        JRadioButton uniaoButton = new JRadioButton("União Estável");
+        uniaoButton.setBounds(460, 567, 119, 23);
+        painelCadastroFisico.add(uniaoButton);
+        
+        dataField = new JTextField();
+        dataField.setColumns(10);
+        dataField.setBounds(10, 125, 841, 30);
+        painelCadastroFisico.add(dataField);
+        
+        JLabel nomeLabel = new JLabel("Nome Completo");
+        nomeLabel.setFont(new Font("Segoe UI", Font.BOLD, 28));
+        nomeLabel.setBounds(10, 11, 221, 38);
+        painelCadastroFisico.add(nomeLabel);
+        
+        JLabel lblDataDeNascimento = new JLabel("Data de Nascimento (dd/MM/YYYY)");
+        lblDataDeNascimento.setFont(new Font("Segoe UI", Font.BOLD, 28));
+        lblDataDeNascimento.setBounds(10, 89, 569, 38);
+        painelCadastroFisico.add(lblDataDeNascimento);
+        
+        JLabel lblCPF = new JLabel("CPF");
+        lblCPF.setFont(new Font("Segoe UI", Font.BOLD, 28));
+        lblCPF.setBounds(10, 166, 569, 38);
+        painelCadastroFisico.add(lblCPF);
         scrollCadastroFisica.setBounds(50, 101, 910, 537);
         cadastroFisicaPanel.add(scrollCadastroFisica);
 
@@ -206,7 +370,46 @@ public class Main {
         btnRelatorios.setIcon(new ImageIcon(Main.class.getResource("/resources/images/Lupa.jpg")));
         btnRelatorios.setBounds(37, 529, 105, 100);
         frame.getContentPane().add(btnRelatorios);
-    
+        ButtonGroup buttonGroup = new ButtonGroup();
+        buttonGroup.add(casadoButton);
+        buttonGroup.add(separadoButton);
+        buttonGroup.add(solteiroButton);
+        buttonGroup.add(uniaoButton);
+        buttonGroup.add(viuvoButton);
+        
+        JLabel lblTelefone = new JLabel("Telefone");
+        lblTelefone.setFont(new Font("Segoe UI", Font.BOLD, 28));
+        lblTelefone.setBounds(10, 240, 569, 38);
+        painelCadastroFisico.add(lblTelefone);
+        
+        JLabel lblEmail = new JLabel("E-mail");
+        lblEmail.setFont(new Font("Segoe UI", Font.BOLD, 28));
+        lblEmail.setBounds(10, 315, 569, 38);
+        painelCadastroFisico.add(lblEmail);
+        
+        JLabel lblEndereo = new JLabel("Endereço");
+        lblEndereo.setFont(new Font("Segoe UI", Font.BOLD, 28));
+        lblEndereo.setBounds(10, 389, 569, 38);
+        painelCadastroFisico.add(lblEndereo);
+        
+        JRadioButton divorcioButton = new JRadioButton("Divorciado(a)");
+        divorcioButton.setBounds(581, 567, 112, 23);
+        painelCadastroFisico.add(divorcioButton);
+        buttonGroup.add(divorcioButton);
+        
+        JLabel lblProfisso = new JLabel("Profissão");
+        lblProfisso.setFont(new Font("Segoe UI", Font.BOLD, 28));
+        lblProfisso.setBounds(10, 465, 569, 38);
+        painelCadastroFisico.add(lblProfisso);
+        
+        JLabel lblEstadoCivil = new JLabel("Estado Civil");
+        lblEstadoCivil.setFont(new Font("Segoe UI", Font.BOLD, 28));
+        lblEstadoCivil.setBounds(10, 533, 569, 38);
+        painelCadastroFisico.add(lblEstadoCivil);
+        
+        JButton cadastrarFisicoButton = new JButton("Cadastrar");
+        cadastrarFisicoButton.setBounds(748, 601, 103, 23);
+        painelCadastroFisico.add(cadastrarFisicoButton);
         // Adicionar ação nos botões para mudar o painel de conteúdo
         btnHome.addActionListener(new ActionListener() {
             @Override
