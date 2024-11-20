@@ -124,6 +124,15 @@ public class AppController {
     	inserirCliente(cliente);
     	
     }
+    public void cadastrarClienteEmpresa(String nome, String email, String telefone, String endereco, String cnpj, String nomeFantasia, String razaoSocial) {
+    	
+    	
+    	Cliente cliente = new Empresa(nome, email, telefone, endereco, 
+    			cnpj, nomeFantasia, razaoSocial);
+    	
+    	inserirCliente(cliente);
+    	
+    }
 
 
 }

@@ -525,6 +525,35 @@ public class Main {
 				}
 			}
 		});
+		cadastrarJuridicoButton.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				try {
+					String nome = nomeFieldJuridica.getText();
+					String email = emailFieldJuridica.getText();
+					String telefone = telefoneFieldJuridica.getText();
+					String endereco = enderecoFieldJuridica.getText();
+					String cnpj = cnpjFieldJuridica.getText();
+					String nomeFantasia = nomeFantasiaFieldJuridica.getText();
+					String razaoSocial = razaoSocialFieldJuridica.getText();
+					
+					
+					
+					// Chamando o método do controlador
+					AppController app = AppController.getInstance();
+					app.cadastrarClienteEmpresa(nome, email, telefone, endereco, cnpj, nomeFantasia,razaoSocial);
+						
+					cardLayout.show(contentPanel, "Cadastro");
+					
+				}  catch (SQLException ex) {
+					ex.printStackTrace();
+					JOptionPane.showMessageDialog(null, "Erro ao salvar os dados no banco.", "Erro",
+							JOptionPane.ERROR_MESSAGE);
+				} catch (IllegalArgumentException ex) {
+					JOptionPane.showMessageDialog(null, ex.getMessage(), "Erro", JOptionPane.ERROR_MESSAGE);
+				}
+			}
+		});
 
 	}
 
