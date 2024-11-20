@@ -23,7 +23,6 @@ BEGIN
     -- Lógica do trigger, se necessário
     NULL;
 END;
-/
 
 -- Criação da tabela TipoSeguro
 CREATE TABLE TipoSeguro (
@@ -49,12 +48,13 @@ CREATE TABLE ClienteSeguro (
     CONSTRAINT fk_tipo_seguro FOREIGN KEY (idTipoSeguro) REFERENCES TipoSeguro(idTipoSeguro)
 );
 
--- Criação da tabela T_PessoaFisica
+-- Criação da tabela T_PessoaFisica (adicionando dataNascimento)
 CREATE TABLE T_PessoaFisica (
     idCliente NUMBER PRIMARY KEY,
     cpf VARCHAR2(11) UNIQUE NOT NULL,
     estadoCivil VARCHAR2(20),  -- Pode ser 'SOLTEIRO', 'CASADO', etc.
     profissao VARCHAR2(100),
+    dataNascimento DATE,  -- Adicionando o campo de data de nascimento
     CONSTRAINT fk_cliente_pfisica FOREIGN KEY (idCliente) REFERENCES T_Cliente(idCliente)
 );
 
@@ -66,4 +66,3 @@ CREATE TABLE T_Empresa (
     razaoSocial VARCHAR2(255),
     CONSTRAINT fk_cliente_empresa FOREIGN KEY (idCliente) REFERENCES T_Cliente(idCliente)
 );
-

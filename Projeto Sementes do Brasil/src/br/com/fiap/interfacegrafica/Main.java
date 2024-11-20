@@ -1,5 +1,6 @@
 package br.com.fiap.interfacegrafica;
 
+import java.awt.CardLayout;
 import java.awt.EventQueue;
 import java.awt.Graphics;
 import java.awt.event.ActionEvent;
@@ -12,11 +13,15 @@ import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
+import javax.swing.JLabel;
+import java.awt.Font;
+import java.awt.Color;
 
 public class Main {
 
     private JFrame frame;
- 
+    private JPanel contentPanel; // Painel para o conteúdo da direita
+    private CardLayout cardLayout; // Layout para trocar os painéis à direita
 
     /**
      * Launch the application.
@@ -57,52 +62,128 @@ public class Main {
         frame.setContentPane(backgroundPanel);
         frame.getContentPane().setLayout(null);
 
-        // Botões
+        // Criar o painel de conteúdo à direita e configurar o CardLayout
+        cardLayout = new CardLayout();
+        contentPanel = new JPanel(cardLayout);
+        contentPanel.setBounds(160, 0, 1056, 713); // Ajuste do tamanho do painel à direita
+        contentPanel.setOpaque(false); // Deixar o painel de conteúdo transparente
+        frame.getContentPane().add(contentPanel);
+        
+        // Criar os painéis de conteúdo (páginas)
+        JPanel homePanel = new JPanel();
+        homePanel.setOpaque(false); // Garantir que o painel do conteúdo também seja transparente
+        homePanel.setLayout(null);
+        JLabel lblHome = new JLabel("HOME");
+        lblHome.setForeground(new Color(255, 255, 255));
+        lblHome.setFont(new Font("Segoe UI", Font.BOLD, 50));
+        lblHome.setBounds(435, 11, 156, 43);
+        homePanel.add(lblHome);
+        
+        JPanel cadastroPanel = new JPanel();
+        cadastroPanel.setOpaque(false); // Garantir que o painel do conteúdo também seja transparente
+        cadastroPanel.setLayout(null);
+        JLabel lblCadastroDeClientes = new JLabel("CADASTRO DE CLIENTES");
+        lblCadastroDeClientes.setForeground(new Color(255, 255, 255));
+        lblCadastroDeClientes.setFont(new Font("Segoe UI", Font.BOLD, 50));
+        lblCadastroDeClientes.setBounds(236, 11, 610, 47);
+        cadastroPanel.add(lblCadastroDeClientes);
+
+        JPanel segurosPanel = new JPanel();
+        segurosPanel.setOpaque(false); // Garantir que o painel do conteúdo também seja transparente
+        segurosPanel.setLayout(null);
+        JLabel lblSeguros = new JLabel("SEGUROS");
+        lblSeguros.setForeground(new Color(255, 255, 255));
+        lblSeguros.setFont(new Font("Segoe UI", Font.BOLD, 50));
+        lblSeguros.setBounds(400, 0, 243, 67);
+        segurosPanel.add(lblSeguros);
+
+        JPanel relatoriosPanel = new JPanel();
+        relatoriosPanel.setOpaque(false); // Garantir que o painel do conteúdo também seja transparente
+        relatoriosPanel.setLayout(null);
+        JLabel lblDados = new JLabel("DADOS");
+        lblDados.setBounds(440, 0, 175, 67);
+        lblDados.setForeground(new Color(255, 255, 255));
+        lblDados.setFont(new Font("Segoe UI", Font.BOLD, 50));
+        relatoriosPanel.add(lblDados);
+
+        // Adicionar os painéis de conteúdo ao painel principal
+        contentPanel.add(homePanel, "Home");
+        
+       
+        
+        contentPanel.add(cadastroPanel, "Cadastro");
+        contentPanel.add(segurosPanel, "Seguros");
+        contentPanel.add(relatoriosPanel, "Relatórios");
+
+        // Botões de navegação
         JButton shutdownButton = new JButton("");
         shutdownButton.setToolTipText("Sair");
-       
         shutdownButton.setBounds(1130, 603, 60, 60);
         frame.getContentPane().add(shutdownButton);
         shutdownButton.setIcon(new ImageIcon(Main.class.getResource("/resources/images/off.png")));
-        JButton btnNewButton = new JButton("");
-        btnNewButton.setToolTipText("Home");
-        btnNewButton.setIcon(new ImageIcon(Main.class.getResource("/resources/images/Homebotão.png")));
         shutdownButton.setOpaque(false); // Deixa o fundo transparente
         shutdownButton.setBorderPainted(false); // Remove a borda do botão
         shutdownButton.setContentAreaFilled(false);
-       
-        btnNewButton.setBounds(37, 164, 105, 100);
-        frame.getContentPane().add(btnNewButton);
+        
+        JButton btnHome = new JButton("");
+        btnHome.setToolTipText("Home");
+        btnHome.setIcon(new ImageIcon(Main.class.getResource("/resources/images/Homebotão.png")));
+        btnHome.setBounds(37, 164, 105, 100);
+        frame.getContentPane().add(btnHome);
 
-        JButton btnNewButton_1 = new JButton("");
-        btnNewButton_1.setToolTipText("Cadastrar Usuario\r\n");
-        btnNewButton_1.setIcon(new ImageIcon(Main.class.getResource("/resources/images/CADASTRO DE CLIENRTESPlus.jpg")));
-        btnNewButton_1.setBounds(37, 286, 105, 100);
-        frame.getContentPane().add(btnNewButton_1);
+        JButton btnCadastro = new JButton("");
+        btnCadastro.setToolTipText("Cadastrar Cliente");
+        btnCadastro.setIcon(new ImageIcon(Main.class.getResource("/resources/images/CADASTRO DE CLIENRTESPlus.jpg")));
+        btnCadastro.setBounds(37, 286, 105, 100);
+        frame.getContentPane().add(btnCadastro);
 
-        JButton btnNewButton_2 = new JButton("");
-        btnNewButton_2.setToolTipText("Seguros");
-        btnNewButton_2.setIcon(new ImageIcon(Main.class.getResource("/resources/images/SegurosBotão.png")));
-        btnNewButton_2.setBounds(37, 406, 105, 100);
-        frame.getContentPane().add(btnNewButton_2);
+        JButton btnSeguros = new JButton("");
+        btnSeguros.setToolTipText("Seguros");
+        btnSeguros.setIcon(new ImageIcon(Main.class.getResource("/resources/images/SegurosBotão.png")));
+        btnSeguros.setBounds(37, 406, 105, 100);
+        frame.getContentPane().add(btnSeguros);
 
-        JButton btnNewButton_3 = new JButton("");
-        btnNewButton_3.setToolTipText("Dados");
-        btnNewButton_3.setIcon(new ImageIcon(Main.class.getResource("/resources/images/RelatóriosBotão.png")));
-        btnNewButton_3.setBounds(37, 529, 105, 100);
-        frame.getContentPane().add(btnNewButton_3);
+        JButton btnRelatorios = new JButton("");
+        btnRelatorios.setToolTipText("Dados");
+        btnRelatorios.setIcon(new ImageIcon(Main.class.getResource("/resources/images/Lupa.jpg")));
+        btnRelatorios.setBounds(37, 529, 105, 100);
+        frame.getContentPane().add(btnRelatorios);
     
-    
-        shutdownButton.addActionListener(new ActionListener() {
+        // Adicionar ação nos botões para mudar o painel de conteúdo
+        btnHome.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                cardLayout.show(contentPanel, "Home");
+            }
+        });
 
-			@Override
-			public void actionPerformed(ActionEvent e) {
-				frame.dispose();
-				
-			}
-        	
+        btnCadastro.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                cardLayout.show(contentPanel, "Cadastro");
+            }
+        });
+
+        btnSeguros.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                cardLayout.show(contentPanel, "Seguros");
+            }
+        });
+
+        btnRelatorios.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                cardLayout.show(contentPanel, "Relatórios");
+            }
         });
     
+        shutdownButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                frame.dispose();
+            }
+        });
     }
 
     // Classe do painel de fundo
@@ -127,8 +208,5 @@ public class Main {
                 g.drawImage(backgroundImage, 0, 0, getWidth(), getHeight(), this);
             }
         }
-        
     }
-
-   
 }
