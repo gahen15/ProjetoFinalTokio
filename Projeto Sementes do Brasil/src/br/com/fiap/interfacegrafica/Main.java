@@ -16,6 +16,7 @@ import javax.swing.JPanel;
 import javax.swing.JLabel;
 import java.awt.Font;
 import java.awt.Color;
+import javax.swing.JScrollPane;
 
 public class Main {
 
@@ -108,12 +109,42 @@ public class Main {
 
         // Adicionar os painéis de conteúdo ao painel principal
         contentPanel.add(homePanel, "Home");
-        
-       
-        
         contentPanel.add(cadastroPanel, "Cadastro");
         contentPanel.add(segurosPanel, "Seguros");
         contentPanel.add(relatoriosPanel, "Relatórios");
+
+        // Criar os painéis "CadastroJuridica" e "CadastroFisica"
+        JPanel cadastroJuridicaPanel = new JPanel();
+        cadastroJuridicaPanel.setOpaque(false);
+        cadastroJuridicaPanel.setLayout(null);
+        JLabel lblCadastroJuridica = new JLabel("CADASTRO JURÍDICO");
+        lblCadastroJuridica.setForeground(new Color(255, 255, 255));
+        lblCadastroJuridica.setFont(new Font("Segoe UI", Font.BOLD, 50));
+        lblCadastroJuridica.setBounds(253, 11, 516, 47);
+        cadastroJuridicaPanel.add(lblCadastroJuridica);
+
+        JPanel cadastroFisicaPanel = new JPanel();
+        cadastroFisicaPanel.setOpaque(false);
+        cadastroFisicaPanel.setLayout(null);
+        JLabel lblCadastroFisica = new JLabel("CADASTRO FÍSICO");
+        lblCadastroFisica.setForeground(new Color(255, 255, 255));
+        lblCadastroFisica.setFont(new Font("Segoe UI", Font.BOLD, 50));
+        lblCadastroFisica.setBounds(299, 11, 442, 47);
+        cadastroFisicaPanel.add(lblCadastroFisica);
+
+        // Adicionar os painéis ao contentPanel
+        contentPanel.add(cadastroJuridicaPanel, "CadastroJuridica");
+        
+        JPanel painelCadastroJuridico = new JPanel();
+        painelCadastroJuridico.setBounds(50, 101, 910, 537);
+        cadastroJuridicaPanel.add(painelCadastroJuridico);
+        painelCadastroJuridico.setLayout(null);
+        contentPanel.add(cadastroFisicaPanel, "CadastroFisica");
+        
+        JPanel painelCadastroFisico = new JPanel();
+        painelCadastroFisico.setLayout(null);
+        painelCadastroFisico.setBounds(50, 101, 910, 537);
+        cadastroFisicaPanel.add(painelCadastroFisico);
 
         // Botões de navegação
         JButton shutdownButton = new JButton("");
@@ -136,6 +167,16 @@ public class Main {
         btnCadastro.setIcon(new ImageIcon(Main.class.getResource("/resources/images/CADASTRO DE CLIENRTESPlus.jpg")));
         btnCadastro.setBounds(37, 286, 105, 100);
         frame.getContentPane().add(btnCadastro);
+        
+        JButton botaoJuridica = new JButton(""); 
+        botaoJuridica.setIcon(new ImageIcon(Main.class.getResource("/resources/images/botãoJurídica.png"))); 
+        botaoJuridica.setBounds(171, 164, 312, 415); 
+        cadastroPanel.add(botaoJuridica); 
+        
+        JButton botaoFisica = new JButton(""); 
+        botaoFisica.setIcon(new ImageIcon(Main.class.getResource("/resources/images/botãoFísica.png"))); 
+        botaoFisica.setBounds(583, 164, 312, 415); 
+        cadastroPanel.add(botaoFisica); 
 
         JButton btnSeguros = new JButton("");
         btnSeguros.setToolTipText("Seguros");
@@ -177,7 +218,21 @@ public class Main {
                 cardLayout.show(contentPanel, "Relatórios");
             }
         });
-    
+
+        botaoJuridica.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                cardLayout.show(contentPanel, "CadastroJuridica");
+            }
+        });
+
+        botaoFisica.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                cardLayout.show(contentPanel, "CadastroFisica");
+            }
+        });
+
         shutdownButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
@@ -202,10 +257,8 @@ public class Main {
         @Override
         protected void paintComponent(Graphics g) {
             super.paintComponent(g);
-
-            // Desenhar a imagem de fundo
             if (backgroundImage != null) {
-                g.drawImage(backgroundImage, 0, 0, getWidth(), getHeight(), this);
+                g.drawImage(backgroundImage, 0, 0, getWidth(), getHeight(), null);
             }
         }
     }
