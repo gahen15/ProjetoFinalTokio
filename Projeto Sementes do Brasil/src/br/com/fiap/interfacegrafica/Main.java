@@ -1,7 +1,10 @@
 package br.com.fiap.interfacegrafica;
 
 import java.awt.CardLayout;
+import java.awt.Color;
+import java.awt.Dimension;
 import java.awt.EventQueue;
+import java.awt.Font;
 import java.awt.Graphics;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -12,10 +15,8 @@ import javax.imageio.ImageIO;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JFrame;
-import javax.swing.JPanel;
 import javax.swing.JLabel;
-import java.awt.Font;
-import java.awt.Color;
+import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 
 public class Main {
@@ -113,7 +114,7 @@ public class Main {
         contentPanel.add(segurosPanel, "Seguros");
         contentPanel.add(relatoriosPanel, "Relatórios");
 
-        // Criar os painéis "CadastroJuridica" e "CadastroFisica"
+     // Criar os painéis "CadastroJuridica" e "CadastroFisica"
         JPanel cadastroJuridicaPanel = new JPanel();
         cadastroJuridicaPanel.setOpaque(false);
         cadastroJuridicaPanel.setLayout(null);
@@ -134,18 +135,34 @@ public class Main {
 
         // Adicionar os painéis ao contentPanel
         contentPanel.add(cadastroJuridicaPanel, "CadastroJuridica");
-        
+
         JPanel painelCadastroJuridico = new JPanel();
-        painelCadastroJuridico.setBounds(50, 101, 910, 537);
-        cadastroJuridicaPanel.add(painelCadastroJuridico);
         painelCadastroJuridico.setLayout(null);
+
+        // Defina um tamanho maior para o painel dentro do JScrollPane
+        painelCadastroJuridico.setPreferredSize(new Dimension(910, 800)); // Ajuste o tamanho conforme necessário
+        painelCadastroJuridico.setBounds(50, 101, 910, 537);
+
+        // Envolver o painel de cadastro jurídico com JScrollPane (somente vertical)
+        JScrollPane scrollCadastroJuridica = new JScrollPane(painelCadastroJuridico, JScrollPane.VERTICAL_SCROLLBAR_ALWAYS, JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
+        scrollCadastroJuridica.setBounds(50, 101, 910, 537);
+        cadastroJuridicaPanel.add(scrollCadastroJuridica);
+
         contentPanel.add(cadastroFisicaPanel, "CadastroFisica");
-        
+
         JPanel painelCadastroFisico = new JPanel();
         painelCadastroFisico.setLayout(null);
-        painelCadastroFisico.setBounds(50, 101, 910, 537);
-        cadastroFisicaPanel.add(painelCadastroFisico);
 
+        // Defina um tamanho maior para o painel dentro do JScrollPane
+        painelCadastroFisico.setPreferredSize(new Dimension(910, 800)); // Ajuste o tamanho conforme necessário
+        painelCadastroFisico.setBounds(50, 101, 910, 537);
+
+        // Envolver o painel de cadastro físico com JScrollPane (somente vertical)
+        JScrollPane scrollCadastroFisica = new JScrollPane(painelCadastroFisico, JScrollPane.VERTICAL_SCROLLBAR_ALWAYS, JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
+        scrollCadastroFisica.setBounds(50, 101, 910, 537);
+        cadastroFisicaPanel.add(scrollCadastroFisica);
+
+        
         // Botões de navegação
         JButton shutdownButton = new JButton("");
         shutdownButton.setToolTipText("Sair");
