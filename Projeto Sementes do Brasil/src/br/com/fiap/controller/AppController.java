@@ -8,6 +8,7 @@ import br.com.fiap.connection.ConnectionFactory;
 import br.com.fiap.dao.ClienteDAO;
 import br.com.fiap.dao.SeguroDAO;
 import br.com.fiap.models.Cliente;
+import br.com.fiap.models.EstadoCivil;
 import br.com.fiap.models.implement.Seguro;
 import br.com.fiap.models.submodel.Empresa;
 import br.com.fiap.models.submodel.PessoaFisica;
@@ -113,4 +114,16 @@ public class AppController {
     public void listarSegurosPorCliente(long id) {
         seguroDAO.listarSegurosPorCliente(id);
     }
+    public void cadastrarClienteFisico(String nome, String email, String telefone, String endereco, 
+            String cpf, EstadoCivil estadoCivil, String profissao, Date dataNascimento) {
+    	
+    	
+    	Cliente cliente = new PessoaFisica(nome, email, telefone, endereco, 
+                 cpf, estadoCivil, profissao, dataNascimento);
+    	
+    	inserirCliente(cliente);
+    	
+    }
+
+
 }

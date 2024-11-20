@@ -2,11 +2,11 @@
 CREATE SEQUENCE seq_cliente
 START WITH 1
 INCREMENT BY 1
-CACHE 10;  -- Usando CACHE maior que 1
+CACHE 10;
 
 -- Criação da tabela T_Cliente
 CREATE TABLE T_Cliente (
-    idCliente NUMBER PRIMARY KEY,  -- Altere de LONG para NUMBER
+    idCliente NUMBER PRIMARY KEY,
     nome VARCHAR2(255) NOT NULL,
     email VARCHAR2(255) NOT NULL,
     telefone VARCHAR2(15),
@@ -15,20 +15,22 @@ CREATE TABLE T_Cliente (
     dataCadastro DATE NOT NULL
 );
 
--- Criação do Trigger (garantir que a tabela T_Cliente foi criada corretamente antes)
+-- Criação do Trigger
 CREATE OR REPLACE TRIGGER trg_cliente
 BEFORE INSERT ON T_Cliente
 FOR EACH ROW
 BEGIN
-    -- Lógica do trigger, se necessário
-    NULL;
+    IF :NEW.idCliente IS NULL THEN
+        SELECT seq_cliente.NEXTVAL INTO :NEW.idCliente FROM DUAL;
+    END IF;
 END;
+/
 
 -- Criação da tabela TipoSeguro
 CREATE TABLE TipoSeguro (
-    idTipoSeguro NUMBER PRIMARY KEY, 
-    descricao VARCHAR2(255) NOT NULL,  -- Descrição do tipo de seguro (ex: 'Individual', 'Estagiário', etc.)
-    categoria VARCHAR2(20) NOT NULL    -- Categoria: 'Pessoa Física' ou 'Pessoa Jurídica'
+    idTipoSeguro NUMBER PRIMARY KEY,
+    descricao VARCHAR2(255) NOT NULL,
+    categoria VARCHAR2(20) NOT NULL -- Categoria: 'Pessoa Física' ou 'Pessoa Jurídica'
 );
 
 -- Inserção de dados na tabela TipoSeguro
@@ -39,22 +41,22 @@ INSERT INTO TipoSeguro (idTipoSeguro, descricao, categoria) VALUES (4, 'Turismo'
 INSERT INTO TipoSeguro (idTipoSeguro, descricao, categoria) VALUES (5, 'Transporte de Pessoas', 'Pessoa Jurídica');
 INSERT INTO TipoSeguro (idTipoSeguro, descricao, categoria) VALUES (6, 'Coletivo', 'Pessoa Jurídica');
 
--- Criação da tabela ClienteSeguro para relacionar clientes com tipos de seguro
+-- Criação da tabela ClienteSeguro
 CREATE TABLE ClienteSeguro (
-    idCliente NUMBER,               -- Chave estrangeira referenciando T_Cliente
-    idTipoSeguro NUMBER,            -- Chave estrangeira referenciando TipoSeguro
-    PRIMARY KEY (idCliente, idTipoSeguro),  -- Chave primária composta
+    idCliente NUMBER,
+    idTipoSeguro NUMBER,
+    PRIMARY KEY (idCliente, idTipoSeguro),
     CONSTRAINT fk_cliente FOREIGN KEY (idCliente) REFERENCES T_Cliente(idCliente),
     CONSTRAINT fk_tipo_seguro FOREIGN KEY (idTipoSeguro) REFERENCES TipoSeguro(idTipoSeguro)
 );
 
--- Criação da tabela T_PessoaFisica (adicionando dataNascimento)
+-- Criação da tabela T_PessoaFisica
 CREATE TABLE T_PessoaFisica (
     idCliente NUMBER PRIMARY KEY,
     cpf VARCHAR2(11) UNIQUE NOT NULL,
-    estadoCivil VARCHAR2(20),  -- Pode ser 'SOLTEIRO', 'CASADO', etc.
+    estadoCivil VARCHAR2(20),
     profissao VARCHAR2(100),
-    dataNascimento DATE,  -- Adicionando o campo de data de nascimento
+    dataNascimento DATE,
     CONSTRAINT fk_cliente_pfisica FOREIGN KEY (idCliente) REFERENCES T_Cliente(idCliente)
 );
 
