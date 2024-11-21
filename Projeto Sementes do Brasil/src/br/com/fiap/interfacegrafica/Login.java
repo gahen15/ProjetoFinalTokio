@@ -4,7 +4,6 @@ import java.awt.EventQueue;
 import java.awt.Font;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.sql.SQLException;
 
 import javax.swing.AbstractAction;
 import javax.swing.Action;
@@ -12,8 +11,10 @@ import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
+import javax.swing.JOptionPane;
 import javax.swing.JPasswordField;
 import javax.swing.JTextField;
+import javax.swing.SwingUtilities;
 
 public class Login {
 
@@ -96,23 +97,43 @@ public class Login {
 	}
 
 	private class SwingAction extends AbstractAction {
+		/**
+		 * 
+		 */
+		private static final long serialVersionUID = 1L;
+
+
 		public SwingAction() {
 			putValue(NAME, "Logar");
 			putValue(SHORT_DESCRIPTION, "Some short description");
 		}
 
+		
 		public void actionPerformed(ActionEvent e) {
-			String senha = passwordField.getText();
-			frame.dispose();
-			
-			try {
-				new Main();
-			} catch (SQLException e1) {
-				// TODO Auto-generated catch block
-				e1.printStackTrace();
-			}
-			
+		    try {
+		        // Captura o usuário e a senha
+		        String usuario = textField.getText();
+		        String senha = new String(passwordField.getPassword()); // Converte de char[] para String
+
+		        // Cria a instância de 'Usuarios' e valida o login
+		        Usuarios login = new Usuarios();
+		        if (login.validarUsuario(usuario, senha)) {
+		            // Se o login for válido, fecha a tela de login e abre a tela principal
+		            frame.dispose();
+		            new Main();  // Chama a tela principal
+		        } else {
+		            // Se o login for inválido, exibe mensagem de erro
+		            SwingUtilities.invokeLater(() -> {
+		                JOptionPane.showMessageDialog(null, "Usuário ou senha incorretos!");
+		            });
+		        }
+		    } catch (Exception ex) {
+		        // Imprime o erro completo no console para diagnóstico
+		        ex.printStackTrace();
+		        JOptionPane.showMessageDialog(null, "Erro inesperado: " + ex.getMessage());
+		    }
+		}
 
 		}
 	}
-}
+
