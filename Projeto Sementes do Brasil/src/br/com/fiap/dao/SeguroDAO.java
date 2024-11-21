@@ -4,8 +4,11 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.List;
 
-import br.com.fiap.models.implement.Seguro;
+import br.com.fiap.models.TipoSeguro;
+
 
 public class SeguroDAO {
 
@@ -14,27 +17,39 @@ public class SeguroDAO {
     public SeguroDAO(Connection connection) {
         this.connection = connection;
     }
+ 
 
-    public void inserirTipoSeguro(Seguro seguro) {
-        String sql = "INSERT INTO TipoSeguro (descricao, categoria) VALUES (?, ?)";
+    public List<TipoSeguro> listarTodosSeguros() {
+        String sql = "SELECT idTipoSeguro, descricao, categoria FROM TipoSeguro";  // Consulta para todos os seguros
 
-        try (PreparedStatement stmt = connection.prepareStatement(sql)) {
-            stmt.setString(1, seguro.getDescricao());  
-            stmt.setString(2, seguro.getCategoria()); 
+        List<TipoSeguro> listaSeguros = new ArrayList<>();
 
-            stmt.executeUpdate();
+        try (PreparedStatement stmt = connection.prepareStatement(sql);
+             ResultSet rs = stmt.executeQuery()) {
+            
+            while (rs.next()) {
+                int idTipoSeguro = rs.getInt("idTipoSeguro");
+                String descricao = rs.getString("descricao");
+                String categoria = rs.getString("categoria");
+
+                TipoSeguro tipoSeguro = new TipoSeguro(idTipoSeguro, descricao, categoria);
+                listaSeguros.add(tipoSeguro);
+            }
         } catch (SQLException e) {
-            throw new RuntimeException("Erro ao inserir tipo de seguro", e);
+            throw new RuntimeException("Erro ao listar todos os seguros", e);
         }
+
+        return listaSeguros;
     }
 
+    
 
-    public void associarSeguroAoCliente(long idCliente, Seguro seguro) {
+    public void associarSeguroAoCliente(long idCliente, TipoSeguro seguro) {
         String sql = "INSERT INTO ClienteSeguro (idCliente, idTipoSeguro) VALUES (?, ?)";
 
         try (PreparedStatement stmt = connection.prepareStatement(sql)) {
             stmt.setLong(1, idCliente);
-            stmt.setLong(2, seguro.getIdTipoSeguro());  
+            stmt.setLong(2, seguro.getIdTipoSeguro());  // Aqui você usa o método do TipoSeguro, não do Seguro
 
             stmt.executeUpdate();
         } catch (SQLException e) {
@@ -42,6 +57,25 @@ public class SeguroDAO {
         }
     }
 
+
+    // Método para buscar um tipo de seguro pelo ID
+    public TipoSeguro buscarTipoSeguroPorId(Long idTipoSeguro) throws SQLException {
+        TipoSeguro tipoSeguro = null;
+        String query = "SELECT idTipoSeguro, descricao, categoria FROM TipoSeguro WHERE idTipoSeguro = ?";
+        
+        try (PreparedStatement stmt = connection.prepareStatement(query)) {
+            stmt.setLong(1, idTipoSeguro);
+            try (ResultSet rs = stmt.executeQuery()) {
+                if (rs.next()) {
+                    String descricao = rs.getString("descricao");
+                    String categoria = rs.getString("categoria");
+                    tipoSeguro = new TipoSeguro(idTipoSeguro, descricao, categoria);
+                }
+            }
+        }
+        
+        return tipoSeguro;  // Retorna o tipo de seguro ou null se não encontrado
+    }
 
     public void listarSegurosPorCliente(long idCliente) {
         String sql = "SELECT ts.idTipoSeguro, ts.descricao, ts.categoria " +
@@ -95,19 +129,7 @@ public class SeguroDAO {
         } catch (SQLException e) {
             throw new RuntimeException("Erro ao listar clientes por tipo de seguro", e);
         }
-    }
+    }}
 
   
-    public void removerSeguroDeCliente(long idCliente, Seguro seguro) {
-        String sql = "DELETE FROM ClienteSeguro WHERE idCliente = ? AND idTipoSeguro = ?";
-
-        try (PreparedStatement stmt = connection.prepareStatement(sql)) {
-            stmt.setLong(1, idCliente);
-            stmt.setLong(2, seguro.getIdTipoSeguro());  
-
-            stmt.executeUpdate();
-        } catch (SQLException e) {
-            throw new RuntimeException("Erro ao remover seguro de cliente", e);
-        }
-    }
-}
+   

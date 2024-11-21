@@ -1,11 +1,11 @@
 package br.com.fiap.models.submodel;
 
 import br.com.fiap.models.Cliente;
-import br.com.fiap.models.TipoCliente;
+
 
 public class Empresa extends Cliente{
 	private String cnpj, nomeFantasia, razaoSocial;
-	private final TipoCliente tipoCliente = TipoCliente.JURIDICA;
+	private final String tipoCliente = "Pessoa Jurídica";
 	public Empresa() {}
 	public Empresa(String nome, String email, String telefone, String endereco, String cnpj, String nomeFantasia, String razaoSocial) {
 	    super(nome, email, telefone, endereco);
@@ -54,7 +54,7 @@ public class Empresa extends Cliente{
 		this.razaoSocial = razaoSocial;
 	}
 	
-	public TipoCliente getTipoCliente() {
+	public String getTipoCliente() {
 		return  tipoCliente;
 	}
 

@@ -2,13 +2,13 @@ package br.com.fiap.models.submodel;
 
 import br.com.fiap.models.Cliente;
 import br.com.fiap.models.EstadoCivil;
-import br.com.fiap.models.TipoCliente;
+
 import java.sql.Date; // Para representar a data de nascimento
 
 public class PessoaFisica extends Cliente {
 
     private String cpf, profissao;
-    private final TipoCliente tipoCliente = TipoCliente.FISICA;
+    private final String tipoCliente = "Pessoa Física";
     private EstadoCivil estadoCivil;
     private Date dataNascimento; // Novo campo para data de nascimento
 
@@ -57,7 +57,7 @@ public class PessoaFisica extends Cliente {
         this.estadoCivil = estadoCivil;
     }
 
-    public TipoCliente getTipoCliente() {
+    public String getTipoCliente() {
         return tipoCliente;
     }
 

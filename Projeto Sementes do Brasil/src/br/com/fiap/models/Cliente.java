@@ -4,86 +4,97 @@ import java.sql.Date;
 import java.util.ArrayList;
 import java.util.List;
 
-import br.com.fiap.models.implement.Seguro;
-
 public abstract class Cliente {
-	
-	
-	//Atributos
-	private Long IdCliente;
-	
-	private String nome, email, telefone, endereco;
-	private Date dataCadastro;
-	private List<Seguro> seguro;
-	
-	public Cliente() {}
-	
-	//Construtor
-	public Cliente(String nome, String email, String telefone, String endereco) {
-		this.nome = nome;
-		this.email = email;
-		this.telefone = telefone;
-		this.endereco = endereco;
-		this.dataCadastro = new java.sql.Date(System.currentTimeMillis());
-		this.seguro = new ArrayList<Seguro>();
-	}
-	
-	
-	public void adicionarSeguro(Seguro seguro) {
-		this.seguro.add(seguro);
-	}
-	
-	public List<Seguro> getSeguros(){
-		return seguro;
-	}
-	
-	
-	// getter & setters
-	public void setIdCliente(Long idCliente) {
-		this.IdCliente = idCliente;
-	}
-	
-	public void setDataCadastro(Date dataCadastro) {
-		this.dataCadastro = dataCadastro;
-	}
-	
-	public String getNome() {
-		return nome;
-	}
-	public void setNome(String nome) {
-		this.nome = nome;
-	}
-	public String getEmail() {
-		return email;
-	}
-	public void setEmail(String email) {
-		this.email = email;
-	}
-	public String getTelefone() {
-		return telefone;
-	}
-	public void setTelefone(String telefone) {
-		this.telefone = telefone;
-	}
-	public String getEndereco() {
-		return endereco;
-	}
-	public void setEndereco(String endereco) {
-		this.endereco = endereco;
-	}
+    
+    // Atributos
+    private Long idCliente;
+    private String nome, email, telefone, endereco;
+    private Date dataCadastro;
+    private List<TipoSeguro> seguros;  // Lista para armazenar os seguros associados ao cliente
 
-	public Long getIdCliente() {
-		return IdCliente;
-	}
-	public Date getDataCadastro() {
-		return dataCadastro;
-	}
-	
-	
-	
-	
-	
-	
-	
-	
+    // Construtor vazio
+    public Cliente() {
+        this.seguros = new ArrayList<>();  // Inicializa a lista de seguros
+    }
+
+    // Construtor com parâmetros
+    public Cliente(String nome, String email, String telefone, String endereco) {
+        this.nome = nome;
+        this.email = email;
+        this.telefone = telefone;
+        this.endereco = endereco;
+        this.dataCadastro = new java.sql.Date(System.currentTimeMillis());
+        this.seguros = new ArrayList<>();  // Inicializa a lista de seguros
+    }
+
+    // Getters e Setters
+    public Long getIdCliente() {
+        return idCliente;
+    }
+
+    public void setIdCliente(Long idCliente) {
+        this.idCliente = idCliente;
+    }
+
+    public String getNome() {
+        return nome;
+    }
+
+    public void setNome(String nome) {
+        this.nome = nome;
+    }
+
+    public String getEmail() {
+        return email;
+    }
+
+    public void setEmail(String email) {
+        this.email = email;
+    }
+
+    public String getTelefone() {
+        return telefone;
+    }
+
+    public void setTelefone(String telefone) {
+        this.telefone = telefone;
+    }
+
+    public String getEndereco() {
+        return endereco;
+    }
+
+    public void setEndereco(String endereco) {
+        this.endereco = endereco;
+    }
+
+    public Date getDataCadastro() {
+        return dataCadastro;
+    }
+
+    public void setDataCadastro(Date dataCadastro) {
+        this.dataCadastro = dataCadastro;
+    }
+
+    // Getter para a lista de seguros
+    public List<TipoSeguro> getSeguros() {
+        return seguros;
+    }
+
+    // Método para adicionar um seguro à lista
+    public void adicionarSeguro(TipoSeguro seguro) {
+        if (seguro != null) {
+            this.seguros.add(seguro);
+        }
+    }
+
+    // Método para remover um seguro da lista
+    public void removerSeguro(TipoSeguro seguro) {
+        if (seguro != null) {
+            this.seguros.remove(seguro);
+        }
+    }
+
+    // Método abstrato para retornar o tipo de cliente
+    public abstract String getTipoCliente();
 }

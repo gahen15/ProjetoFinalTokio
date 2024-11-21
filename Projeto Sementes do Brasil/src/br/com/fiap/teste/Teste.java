@@ -4,8 +4,8 @@ package br.com.fiap.teste;
 import java.sql.SQLException;
 
 import br.com.fiap.controller.AppController;
-import br.com.fiap.models.implement.Seguro;
-import br.com.fiap.models.implement.SeguroEmpresaEscolar;
+import br.com.fiap.models.TipoSeguro;
+
 
 
 public class Teste {
@@ -17,10 +17,12 @@ public static void main(String[] args) throws SQLException {
 	//app.deletarCliente(3);
 	//app.inserirCliente(Gabriel);
 	//Seguro seguro = new SeguroEmpresaEscolar();
-	//app.associarSeguroCliente(3, seguro );
+	TipoSeguro tipoSeguro = app.buscarTipoSeguroId(3);
+	app.associarSeguroAoCliente(2, tipoSeguro );
 	//app.exibirClientes();
-	//app.listarTipoSeguro(6);
+	//app.listarTipoSeguro(5);
 	//app.listarSegurosPorCliente(3);
+	
 }
 
 	

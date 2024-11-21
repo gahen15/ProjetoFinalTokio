@@ -1,138 +1,219 @@
 package br.com.fiap.controller;
 
 import java.sql.Connection;
+import java.sql.Date; // Importando a classe Date
+import java.sql.DriverManager;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.ArrayList;
 import java.util.List;
+
+import javax.swing.JOptionPane;
 
 import br.com.fiap.connection.ConnectionFactory;
 import br.com.fiap.dao.ClienteDAO;
 import br.com.fiap.dao.SeguroDAO;
 import br.com.fiap.models.Cliente;
 import br.com.fiap.models.EstadoCivil;
-import br.com.fiap.models.implement.Seguro;
+import br.com.fiap.models.TipoSeguro;
 import br.com.fiap.models.submodel.Empresa;
 import br.com.fiap.models.submodel.PessoaFisica;
-import java.sql.Date; // Importando a classe Date
 
 public class AppController {
-    private static AppController instance;
-    private Connection connection;
-    private ClienteDAO clienteDAO;
-    private SeguroDAO seguroDAO;
+	private static final String PASS = null;
+	private static AppController instance;
+	private Connection connection;
+	private ClienteDAO clienteDAO;
+	private SeguroDAO seguroDAO;
 
-    private AppController() throws SQLException {
-        this.connection = new ConnectionFactory().conectar();
-        this.clienteDAO = new ClienteDAO(connection);
-        this.seguroDAO = new SeguroDAO(connection);
-    }
+	private AppController() throws SQLException {
+		this.connection = new ConnectionFactory().conectar();
+		this.clienteDAO = new ClienteDAO(connection);
+		this.seguroDAO = new SeguroDAO(connection);
+	}
 
-    public static AppController getInstance() throws SQLException {
-        if (instance == null) {
-            instance = new AppController();
-        }
-        return instance;
-    }
+	public static AppController getInstance() throws SQLException {
+		if (instance == null) {
+			instance = new AppController();
+		}
+		return instance;
+	}
 
-    public void closeConnection() throws SQLException {
-        if (connection != null && !connection.isClosed()) {
-            connection.close();
-        }
-    }
+	public List<TipoSeguro> listarSegurosDoCliente(long idCliente) throws SQLException {
+	    // Consulta SQL para listar os seguros associados ao cliente
+	    String query = "SELECT ts.idTipoSeguro, ts.descricao, ts.categoria " +
+	                   "FROM TipoSeguro ts " +
+	                   "JOIN ClienteSeguro cs ON ts.idTipoSeguro = cs.idTipoSeguro " +
+	                   "WHERE cs.idCliente = ?";
 
-    public void inserirCliente(Cliente cliente) {
-        try {
-            // Caso o cliente seja uma Pessoa Física, podemos passar a data de nascimento
-            if (cliente instanceof PessoaFisica) {
-                PessoaFisica pf = (PessoaFisica) cliente;
-                Date dataNascimento = pf.getDataNascimento();
-                // Pode-se validar ou processar a data antes de passar para o DAO
-                clienteDAO.InserirCliente(cliente);
-            } else {
-                clienteDAO.InserirCliente(cliente);
-            }
-        } catch (Exception e) {
-            e.printStackTrace(); // Tratar a exceção adequadamente
-        }
-    }
+	    List<TipoSeguro> seguros = new ArrayList<>();
 
-    public void deletarCliente(long id) {
-        try {
-            clienteDAO.deletarCliente(id);
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-    }
+	    try (
+	         PreparedStatement stmt = connection.prepareStatement(query)) {
+	        
+	        stmt.setLong(1, idCliente); // Substitui o '?' pela variável idCliente
 
-    // Método para listar todos os clientes com seus atributos
-    public List<Cliente> listarClientes() {
-        return clienteDAO.listarClientes();
-    }
+	        // Executa a consulta
+	        ResultSet rs = stmt.executeQuery();
 
-    // Método adicional para exibir os clientes (caso precise)
-    public void exibirClientes() {
-        List<Cliente> clientes = listarClientes();
+	        // Processa o resultado e preenche a lista de seguros
+	        while (rs.next()) {
+	            TipoSeguro seguro = new TipoSeguro();
+	            seguro.setId(rs.getLong("idTipoSeguro"));
+	            seguro.setDescricao(rs.getString("descricao"));
+	            seguro.setCategoria(rs.getString("categoria"));
 
-        for (Cliente cliente : clientes) {
-            // Exibe os dados comuns de todos os clientes
-            System.out.println("ID Cliente: " + cliente.getIdCliente());
-            System.out.println("Nome: " + cliente.getNome());
-            System.out.println("Email: " + cliente.getEmail());
-            System.out.println("Telefone: " + cliente.getTelefone());
-            System.out.println("Endereço: " + cliente.getEndereco());
-            System.out.println("Tipo Cliente: " + (cliente instanceof PessoaFisica ? "Pessoa Física"
-                    : cliente instanceof Empresa ? "Empresa" : "Desconhecido"));
+	            // Adiciona o seguro à lista
+	            seguros.add(seguro);
+	        }
+	    } catch (SQLException e) {
+	        System.out.println("Erro ao listar seguros do cliente: " + e.getMessage());
+	        throw e;  // Lança novamente a exceção para o tratamento no controlador
+	    }
 
-            System.out.println("Data Cadastro: " + cliente.getDataCadastro());
+	    return seguros;
+	}
 
-            // Exibindo a data de nascimento se for Pessoa Física
-            if (cliente instanceof PessoaFisica) {
-                PessoaFisica pf = (PessoaFisica) cliente;
-                System.out.println("CPF: " + pf.getCpf());
-                System.out.println("Estado Civil: " + pf.getEstadoCivil());
-                System.out.println("Profissão: " + pf.getProfissao());
-                System.out.println("Data de Nascimento: " + pf.getDataNascimento());
-            }
-            // Exibindo dados da Empresa
-            else if (cliente instanceof Empresa) {
-                Empresa emp = (Empresa) cliente;
-                System.out.println("CNPJ: " + emp.getCnpj());
-                System.out.println("Nome Fantasia: " + emp.getNomeFantasia());
-                System.out.println("Razão Social: " + emp.getRazaoSocial());
-            }
-            System.out.println("--------------------------------------");
-        }
-    }
 
-    public void associarSeguroCliente(long idCliente, Seguro seguro) {
-        seguroDAO.associarSeguroAoCliente(idCliente, seguro);
-    }
+	public boolean verificarSeguroAssociado(long idCliente, TipoSeguro tipoSeguro) throws SQLException {
+	    String sql = "SELECT COUNT(*) FROM clienteseguro WHERE idcliente = ? AND idTipoSeguro = ?";
+	    try (PreparedStatement stmt = connection.prepareStatement(sql)) {
+	        
+	        // Definir os parâmetros da consulta
+	        stmt.setLong(1, idCliente);  // ID do cliente
+	        stmt.setLong(2, tipoSeguro.getIdTipoSeguro());  // ID do seguro
 
-    public void listarTipoSeguro(long id) {
-        seguroDAO.listarClientesPorTipoSeguro(id);
-    }
+	        // Executar a consulta
+	        ResultSet rs = stmt.executeQuery();
+	        if (rs.next()) {
+	            int count = rs.getInt(1);
+	            return count > 0;  // Se contar mais de 0, o seguro está associado
+	        }
+	    }
+	    return false;  // Retorna falso se não encontrar associação
+	}
+	public void removerSeguroDoCliente(long idCliente, TipoSeguro tipoSeguro) throws SQLException {
+		String sql = "DELETE FROM ClienteSeguro WHERE idCliente = ? AND idTipoSeguro = ?";
 
-    public void listarSegurosPorCliente(long id) {
-        seguroDAO.listarSegurosPorCliente(id);
-    }
-    public void cadastrarClienteFisico(String nome, String email, String telefone, String endereco, 
-            String cpf, EstadoCivil estadoCivil, String profissao, Date dataNascimento) {
-    	
-    	
-    	Cliente cliente = new PessoaFisica(nome, email, telefone, endereco, 
-                 cpf, estadoCivil, profissao, dataNascimento);
-    	
-    	inserirCliente(cliente);
-    	
-    }
-    public void cadastrarClienteEmpresa(String nome, String email, String telefone, String endereco, String cnpj, String nomeFantasia, String razaoSocial) {
-    	
-    	
-    	Cliente cliente = new Empresa(nome, email, telefone, endereco, 
-    			cnpj, nomeFantasia, razaoSocial);
-    	
-    	inserirCliente(cliente);
-    	
-    }
+	    try (
+	         PreparedStatement stmt = connection.prepareStatement(sql)) {
 
+	        // Definir os parâmetros da consulta
+	        stmt.setLong(1, idCliente);  // ID do cliente
+	        stmt.setLong(2, tipoSeguro.getIdTipoSeguro());  // ID do seguro
+
+	        // Executar a atualização no banco de dados
+	        int rowsAffected = stmt.executeUpdate();
+	        
+	        if (rowsAffected == 0) {
+	            throw new SQLException("Nenhuma associação encontrada para remover.");
+	        }
+	    }
+	}
+
+
+	public Cliente buscarClientePorId(long id) {
+
+		Cliente cliente = clienteDAO.buscarClientePorId(id);
+
+		return cliente;
+
+	}
+
+	public void closeConnection() throws SQLException {
+		if (connection != null && !connection.isClosed()) {
+			connection.close();
+		}
+	}
+
+	public void inserirCliente(Cliente cliente) {
+		try {
+			// Caso o cliente seja uma Pessoa Física, podemos passar a data de nascimento
+			if (cliente instanceof PessoaFisica) {
+				PessoaFisica pf = (PessoaFisica) cliente;
+				Date dataNascimento = pf.getDataNascimento();
+				// Pode-se validar ou processar a data antes de passar para o DAO
+				clienteDAO.InserirCliente(cliente);
+			} else {
+				clienteDAO.InserirCliente(cliente);
+			}
+		} catch (Exception e) {
+			e.printStackTrace(); // Tratar a exceção adequadamente
+		}
+	}
+
+	public void deletarCliente(long id) {
+		try {
+			clienteDAO.deletarCliente(id);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+	}
+
+	// Método para listar todos os clientes com seus atributos
+	public List<Cliente> listarClientes() {
+		return clienteDAO.listarClientes();
+	}
+
+	public void associarSeguroAoCliente(long idCliente, TipoSeguro seguro) throws SQLException {
+	    try {
+	        // Validação de entrada
+	        if (idCliente <= 0 || seguro == null) {
+	            throw new IllegalArgumentException("Cliente ou seguro inválido.");
+	        }
+
+	        // Buscar o cliente
+	        Cliente cliente = buscarClientePorId(idCliente);  // Método para buscar o cliente no banco de dados ou lista
+	        if (cliente == null) {
+	            throw new IllegalArgumentException("Cliente não encontrado.");
+	        }
+
+	        // Adicionando o seguro à lista de seguros do cliente
+	        cliente.adicionarSeguro(seguro); // Adiciona o seguro à lista de seguros do cliente
+
+	        // Chama o DAO para associar o seguro ao cliente no banco de dados (se necessário)
+	        seguroDAO.associarSeguroAoCliente(idCliente, seguro);
+
+	        // Mostra uma mensagem de sucesso
+	        JOptionPane.showMessageDialog(null, "Seguro associado ao cliente com sucesso!");
+	    } catch (IllegalArgumentException e) {
+	        JOptionPane.showMessageDialog(null, "Erro ao associar seguro ao cliente: " + e.getMessage(), "Erro",
+	                JOptionPane.ERROR_MESSAGE);
+	    }
+	}
+
+	public TipoSeguro buscarTipoSeguroId(long id) throws SQLException {
+		TipoSeguro tipoSeguro = seguroDAO.buscarTipoSeguroPorId(id);
+		return tipoSeguro;
+	}
+
+	public void listarTipoSeguro(long id) {
+		seguroDAO.listarClientesPorTipoSeguro(id);
+	}
+
+	public void cadastrarClienteFisico(String nome, String email, String telefone, String endereco, String cpf,
+			EstadoCivil estadoCivil, String profissao, Date dataNascimento) {
+
+		Cliente cliente = new PessoaFisica(nome, email, telefone, endereco, cpf, estadoCivil, profissao,
+				dataNascimento);
+
+		inserirCliente(cliente);
+
+	}
+
+	public void cadastrarClienteEmpresa(String nome, String email, String telefone, String endereco, String cnpj,
+			String nomeFantasia, String razaoSocial) {
+
+		Cliente cliente = new Empresa(nome, email, telefone, endereco, cnpj, nomeFantasia, razaoSocial);
+
+		inserirCliente(cliente);
+
+	}
+
+	public List<TipoSeguro> listarSeguros() {
+		// TODO Auto-generated method stub
+		return seguroDAO.listarTodosSeguros();
+	}
 
 }

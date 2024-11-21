@@ -10,26 +10,36 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
-import java.sql.Date;
 import java.sql.SQLException;
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.List;
+import java.util.stream.Collectors;
 
 import javax.imageio.ImageIO;
+import javax.swing.BorderFactory;
 import javax.swing.ButtonGroup;
+import javax.swing.DefaultListModel;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
+import javax.swing.JList;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JRadioButton;
 import javax.swing.JScrollPane;
+import javax.swing.JTable;
 import javax.swing.JTextField;
+import javax.swing.ListSelectionModel;
+import javax.swing.table.DefaultTableModel;
 
 import br.com.fiap.controller.AppController;
+import br.com.fiap.models.Cliente;
 import br.com.fiap.models.EstadoCivil;
+import br.com.fiap.models.TipoSeguro;
+
 
 public class Main {
 
@@ -50,96 +60,301 @@ public class Main {
 	private JTextField emailFieldJuridica;
 	private JTextField enderecoFieldJuridica;
 	private JTextField razaoSocialFieldJuridica;
-
 	/**
-	 * Launch the application.
-	 */
-	public static void main(String[] args) {
-		EventQueue.invokeLater(new Runnable() {
-			public void run() {
-				try {
-					Main window = new Main();
-					window.frame.setVisible(true);
-				} catch (Exception e) {
-					e.printStackTrace();
+	 * Launch the application.*/
+
+    public static void main(String[] args) {
+        EventQueue.invokeLater(new Runnable() {
+            public void run() {
+                try {
+                    Main window = new Main();
+                    window.frame.setVisible(true);
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+            }
+        });
+    }
+
+    public Main() throws SQLException {
+        initialize();
+        frame.setVisible(true);
+    }
+
+    private void initialize() throws SQLException {
+        frame = new JFrame();
+        frame.setBounds(0, 0, 1216, 713);
+        frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        frame.setResizable(true);
+        frame.setLocationRelativeTo(null);
+
+        // Criar e adicionar o painel de fundo
+        BackgroundPanel backgroundPanel = new BackgroundPanel();
+        frame.setContentPane(backgroundPanel);
+        frame.getContentPane().setLayout(null);
+
+        // Criar o painel de conteúdo à direita e configurar o CardLayout
+        cardLayout = new CardLayout();
+        contentPanel = new JPanel(cardLayout);
+        contentPanel.setBounds(160, 0, 1056, 713); // Ajuste do tamanho do painel à direita
+        contentPanel.setOpaque(false); // Deixar o painel de conteúdo transparente
+        frame.getContentPane().add(contentPanel);
+
+        // Criar os painéis de conteúdo (páginas)
+        JPanel homePanel = new JPanel();
+        homePanel.setOpaque(false);
+        homePanel.setLayout(null);
+        JLabel lblHome = new JLabel("HOME");
+        lblHome.setBounds(435, 11, 156, 43);
+        lblHome.setForeground(new Color(255, 255, 255));
+        lblHome.setFont(new Font("Segoe UI", Font.BOLD, 50));
+        homePanel.add(lblHome);
+
+        JPanel cadastroPanel = new JPanel();
+        cadastroPanel.setOpaque(false); // Garantir que o painel do conteúdo também seja transparente
+        cadastroPanel.setLayout(null);
+        JLabel lblCadastroDeClientes = new JLabel("CADASTRO DE CLIENTES");
+        lblCadastroDeClientes.setForeground(new Color(255, 255, 255));
+        lblCadastroDeClientes.setFont(new Font("Segoe UI", Font.BOLD, 50));
+        lblCadastroDeClientes.setBounds(236, 11, 610, 47);
+        cadastroPanel.add(lblCadastroDeClientes);
+
+        JPanel segurosPanel = new JPanel();
+        segurosPanel.setOpaque(false); // Garantir que o painel do conteúdo também seja transparente
+        segurosPanel.setLayout(null);
+        JLabel lblSeguros = new JLabel("SEGUROS");
+        lblSeguros.setForeground(new Color(255, 255, 255));
+        lblSeguros.setFont(new Font("Segoe UI", Font.BOLD, 50));
+        lblSeguros.setBounds(400, 0, 243, 67);
+        segurosPanel.add(lblSeguros);
+
+        JPanel relatoriosPanel = new JPanel();
+        relatoriosPanel.setOpaque(false); // Garantir que o painel do conteúdo também seja transparente
+        relatoriosPanel.setLayout(null);
+        JLabel lblDados = new JLabel("DADOS");
+        lblDados.setBounds(440, 0, 175, 67);
+        lblDados.setForeground(new Color(255, 255, 255));
+        lblDados.setFont(new Font("Segoe UI", Font.BOLD, 50));
+        relatoriosPanel.add(lblDados);
+
+        // Adicionar os painéis de conteúdo ao painel principal
+        contentPanel.add(homePanel, "Home");
+        contentPanel.add(cadastroPanel, "Cadastro");
+        contentPanel.add(segurosPanel, "Seguros");
+
+     // Criando o painel que vai conter a lista de seguros
+        JPanel listaSeguros = new JPanel();
+        listaSeguros.setBounds(35, 81, 908, 594);
+        listaSeguros.setLayout(null); // Usando o layout absoluto para posicionamento
+        segurosPanel.add(listaSeguros);
+
+        // Criando a JList para exibir os seguros
+        JList<String> list = new JList<>();
+        list.setLayoutOrientation(JList.VERTICAL);  // Usando uma disposição vertical para os itens
+        list.setSelectionMode(ListSelectionModel.SINGLE_SELECTION); // Permitir apenas a seleção de um item por vez
+
+        // Adicionando a JList dentro de um JScrollPane para permitir rolagem
+        JScrollPane scrollPane = new JScrollPane(list);
+        scrollPane.setBounds(10, 49, 429, 226);
+        scrollPane.setOpaque(false);  // Ajustando a posição e o tamanho
+        listaSeguros.add(scrollPane);
+        listaSeguros.setOpaque(false);
+
+        // Obtendo a lista de seguros
+        AppController app = AppController.getInstance();
+        List<TipoSeguro> listaSeguros1 = app.listarSeguros(); // Obtém todos os seguros
+
+        // Criando o modelo da lista de seguros
+        DefaultListModel<String> model = new DefaultListModel<>();
+        for (TipoSeguro tipoSeguro : listaSeguros1) {
+            model.addElement(tipoSeguro.toString());  // Exibe a descrição ou outros detalhes do seguro
+        }
+        list.setModel(model);
+
+        // Personalizando a aparência da JList
+        list.setOpaque(false); // Fundo mais suave
+        list.setFont(new Font("Arial", Font.PLAIN, 14));  // Definindo uma fonte mais legível
+        list.setBorder(BorderFactory.createLineBorder(Color.BLACK));  // Adicionando uma borda fina
+
+        // Adicionando título
+        JLabel lblNewLabel = new JLabel("Associar Seguro ao Cliente");
+        lblNewLabel.setForeground(new Color(0, 0, 0));
+        lblNewLabel.setFont(new Font("Arial", Font.BOLD, 24));
+        lblNewLabel.setBounds(557, 49, 404, 40);
+        listaSeguros.add(lblNewLabel);
+
+        // Criando campo de texto para inserir ID do Cliente
+        JTextField idClienteField = new JTextField();
+        idClienteField.setBounds(557, 120, 250, 30);
+        listaSeguros.add(idClienteField);
+
+        // Criando botão de pesquisa para buscar o cliente
+        JButton btnPesquisar = new JButton("Pesquisar Cliente");
+        btnPesquisar.setBounds(557, 160, 250, 40);
+        listaSeguros.add(btnPesquisar);
+
+        // Criando botão para associar o seguro ao cliente
+        JButton btnAssociar = new JButton("Associar Seguro");
+        btnAssociar.setBounds(557, 210, 250, 40);
+        btnAssociar.setEnabled(false); // Inicialmente, desabilitado
+        listaSeguros.add(btnAssociar);
+
+        // Criando botão para remover o seguro
+        JButton btnRemover = new JButton("Remover Seguro");
+        btnRemover.setBounds(557, 260, 250, 40);
+        btnRemover.setEnabled(false); // Inicialmente, desabilitado
+        listaSeguros.add(btnRemover);
+
+        // Adicionando a tabela para mostrar as informações do cliente e os seguros associados
+        String[] colunas = { "ID Cliente", "Nome", "Email", "Tipo Cliente", "Seguros Associados" };
+        DefaultTableModel tableModel = new DefaultTableModel(colunas, 0);
+        JTable tableCliente = new JTable(tableModel);
+        tableCliente.setBounds(557, 310, 400, 200);
+        JScrollPane scrollPane_1 = new JScrollPane(tableCliente);
+        scrollPane_1.setSize(888, 70);
+        scrollPane_1.setLocation(10, 344);
+        listaSeguros.add(scrollPane_1);  // Adicionando a tabela ao painel
+     // Ajustando a largura das colunas
+        tableCliente.getColumnModel().getColumn(0).setPreferredWidth(80); // ID Cliente
+        tableCliente.getColumnModel().getColumn(1).setPreferredWidth(150); // Nome
+        tableCliente.getColumnModel().getColumn(2).setPreferredWidth(200); // Email
+        tableCliente.getColumnModel().getColumn(3).setPreferredWidth(120); // Tipo Cliente
+        tableCliente.getColumnModel().getColumn(4).setPreferredWidth(600); // Seguros Associados (aumentada)
+        // Ouvinte para o botão de pesquisa para buscar o cliente e exibir seus dados
+        btnPesquisar.addActionListener(e -> {
+            String idClienteText = idClienteField.getText();
+            if (!idClienteText.isEmpty()) {
+                try {
+                    long idCliente = Integer.parseInt(idClienteText);
+                    Cliente cliente = app.buscarClientePorId(idCliente);  // Chama o método do controlador para buscar o cliente
+
+                    if (cliente != null) {
+                        // Recuperando os seguros associados ao cliente
+                        List<TipoSeguro> segurosAssociados = app.listarSegurosDoCliente(idCliente);
+
+                        // Atualiza a tabela com os dados do cliente e os seguros
+                        DefaultTableModel modelTable = (DefaultTableModel) tableCliente.getModel();
+                        modelTable.setRowCount(0); // Limpa a tabela antes de adicionar o novo cliente
+                        modelTable.addRow(new Object[]{
+                                cliente.getIdCliente(), 
+                                cliente.getNome(), 
+                                cliente.getEmail(), 
+                                cliente.getTipoCliente(), 
+                                segurosAssociados.isEmpty() ? "Nenhum seguro associado" : segurosAssociados.stream()
+                                	    .map(seguro -> String.valueOf(seguro.getIdTipoSeguro()))  // Usa o ID do seguro
+                                	    .collect(Collectors.joining(", "))
+                        });
+
+                        // Habilita os botões de associar e remover
+                        btnAssociar.setEnabled(true);
+                        btnRemover.setEnabled(true);
+                    } else {
+                        JOptionPane.showMessageDialog(frame, "Cliente não encontrado.", "Erro", JOptionPane.ERROR_MESSAGE);
+                        btnAssociar.setEnabled(false);
+                        btnRemover.setEnabled(false);
+                    }
+                } catch (NumberFormatException ex) {
+                    JOptionPane.showMessageDialog(frame, "Por favor, insira um ID válido.", "Erro", JOptionPane.ERROR_MESSAGE);
+                } catch (SQLException e1) {
+					// TODO Auto-generated catch block
+					e1.printStackTrace();
 				}
-			}
-		});
-	}
+            } else {
+                JOptionPane.showMessageDialog(frame, "Por favor, insira o ID do cliente.", "Erro", JOptionPane.ERROR_MESSAGE);
+            }
+        });
 
-	/**
-	 * Create the application.
-	 */
-	public Main() {
-		initialize();
-		frame.setVisible(true);
+        // Ouvinte para o botão de associação de seguro
+        btnAssociar.addActionListener(e -> {
+            String seguroSelecionado = list.getSelectedValue();
+            String idClienteText = idClienteField.getText();
 
-	}
+            // Lógica para validar e associar o seguro com base no tipo de cliente
+            if (seguroSelecionado != null && !idClienteText.isEmpty()) {
+                try {
+                    int idCliente = Integer.parseInt(idClienteText);  // Converte o texto do ID do cliente para um número
+                    Cliente cliente = app.buscarClientePorId(idCliente);  // Chama o método do controlador para buscar o cliente
 
-	/**
-	 * Initialize the contents of the frame.
-	 */
-	private void initialize() {
-		frame = new JFrame();
-		frame.setBounds(0, 0, 1216, 713);
-		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-		frame.setResizable(true);
-		frame.setLocationRelativeTo(null);
+                    if (cliente != null) {
+                        TipoSeguro tipoSeguroSelecionado = listaSeguros1.stream()
+                                .filter(tipo -> tipo.toString().equals(seguroSelecionado))
+                                .findFirst()
+                                .orElse(null);
 
-		// Criar e adicionar o painel de fundo
-		BackgroundPanel backgroundPanel = new BackgroundPanel();
-		frame.setContentPane(backgroundPanel);
-		frame.getContentPane().setLayout(null);
+                        if (tipoSeguroSelecionado != null) {
+                            // Verificar se o tipo de seguro é compatível com o tipo de cliente
+                            if (tipoSeguroSelecionado.getCategoria().equals(cliente.getTipoCliente())) {
+                                // Chama o controlador para associar o seguro
+                                app.associarSeguroAoCliente(idCliente, tipoSeguroSelecionado);
+                                JOptionPane.showMessageDialog(frame, "Seguro associado com sucesso.");
+                            } else {
+                                JOptionPane.showMessageDialog(frame, "O tipo de seguro não corresponde ao tipo de cliente.", "Erro", JOptionPane.ERROR_MESSAGE);
+                            }
+                        } else {
+                            JOptionPane.showMessageDialog(frame, "Tipo de seguro não encontrado.", "Erro", JOptionPane.ERROR_MESSAGE);
+                        }
+                    } else {
+                        JOptionPane.showMessageDialog(frame, "Cliente não encontrado.", "Erro", JOptionPane.ERROR_MESSAGE);
+                    }
+                } catch (NumberFormatException ex) {
+                    JOptionPane.showMessageDialog(frame, "Por favor, insira um ID válido.", "Erro", JOptionPane.ERROR_MESSAGE);
+                } catch (SQLException ex) {
+                    JOptionPane.showMessageDialog(frame, "Erro ao buscar cliente no banco de dados.", "Erro", JOptionPane.ERROR_MESSAGE);
+                }
+            } else {
+                JOptionPane.showMessageDialog(frame, "Por favor, selecione um seguro e insira o ID do cliente.", "Erro", JOptionPane.ERROR_MESSAGE);
+            }
+        });
+     // Ouvinte para o botão de remoção de seguro
+        btnRemover.addActionListener(e -> {
+            String seguroSelecionado = list.getSelectedValue();  // Obtém o seguro selecionado na lista
+            String idClienteText = idClienteField.getText();  // Obtém o ID do cliente a partir do campo de texto
 
-		// Criar o painel de conteúdo à direita e configurar o CardLayout
-		cardLayout = new CardLayout();
-		contentPanel = new JPanel(cardLayout);
-		contentPanel.setBounds(160, 0, 1056, 713); // Ajuste do tamanho do painel à direita
-		contentPanel.setOpaque(false); // Deixar o painel de conteúdo transparente
-		frame.getContentPane().add(contentPanel);
+            // Lógica para validar e remover o seguro do cliente
+            if (seguroSelecionado != null && !idClienteText.isEmpty()) {
+                try {
+                    long idCliente = Integer.parseInt(idClienteText);  // Converte o texto do ID do cliente para um número
+                    Cliente cliente = app.buscarClientePorId(idCliente);  // Chama o método do controlador para buscar o cliente
 
-		// Criar os painéis de conteúdo (páginas)
-		JPanel homePanel = new JPanel();
-		homePanel.setOpaque(false); // Garantir que o painel do conteúdo também seja transparente
-		homePanel.setLayout(null);
-		JLabel lblHome = new JLabel("HOME");
-		lblHome.setForeground(new Color(255, 255, 255));
-		lblHome.setFont(new Font("Segoe UI", Font.BOLD, 50));
-		lblHome.setBounds(435, 11, 156, 43);
-		homePanel.add(lblHome);
+                    if (cliente != null) {
+                        TipoSeguro tipoSeguroSelecionado = listaSeguros1.stream()
+                                .filter(tipo -> tipo.toString().equals(seguroSelecionado))
+                                .findFirst()
+                                .orElse(null);
 
-		JPanel cadastroPanel = new JPanel();
-		cadastroPanel.setOpaque(false); // Garantir que o painel do conteúdo também seja transparente
-		cadastroPanel.setLayout(null);
-		JLabel lblCadastroDeClientes = new JLabel("CADASTRO DE CLIENTES");
-		lblCadastroDeClientes.setForeground(new Color(255, 255, 255));
-		lblCadastroDeClientes.setFont(new Font("Segoe UI", Font.BOLD, 50));
-		lblCadastroDeClientes.setBounds(236, 11, 610, 47);
-		cadastroPanel.add(lblCadastroDeClientes);
+                        if (tipoSeguroSelecionado != null) {
+                            // Verificar se o cliente possui esse seguro associado
+                            if (app.verificarSeguroAssociado(idCliente, tipoSeguroSelecionado)) {
+                                // Chama o controlador para remover o seguro associado
+                                app.removerSeguroDoCliente(idCliente, tipoSeguroSelecionado);
+                                JOptionPane.showMessageDialog(frame, "Seguro removido com sucesso.");
+                            } else {
+                                JOptionPane.showMessageDialog(frame, "Este seguro não está associado a este cliente.", "Erro", JOptionPane.ERROR_MESSAGE);
+                            }
+                        } else {
+                            JOptionPane.showMessageDialog(frame, "Tipo de seguro não encontrado.", "Erro", JOptionPane.ERROR_MESSAGE);
+                        }
+                    } else {
+                        JOptionPane.showMessageDialog(frame, "Cliente não encontrado.", "Erro", JOptionPane.ERROR_MESSAGE);
+                    }
+                } catch (NumberFormatException ex) {
+                    JOptionPane.showMessageDialog(frame, "Por favor, insira um ID válido.", "Erro", JOptionPane.ERROR_MESSAGE);
+                } catch (SQLException ex) {
+                    JOptionPane.showMessageDialog(frame, "Erro ao buscar cliente no banco de dados.", "Erro", JOptionPane.ERROR_MESSAGE);
+                }
+            } else {
+                JOptionPane.showMessageDialog(frame, "Por favor, selecione um seguro e insira o ID do cliente.", "Erro", JOptionPane.ERROR_MESSAGE);
+            }
+        });
 
-		JPanel segurosPanel = new JPanel();
-		segurosPanel.setOpaque(false); // Garantir que o painel do conteúdo também seja transparente
-		segurosPanel.setLayout(null);
-		JLabel lblSeguros = new JLabel("SEGUROS");
-		lblSeguros.setForeground(new Color(255, 255, 255));
-		lblSeguros.setFont(new Font("Segoe UI", Font.BOLD, 50));
-		lblSeguros.setBounds(400, 0, 243, 67);
-		segurosPanel.add(lblSeguros);
 
-		JPanel relatoriosPanel = new JPanel();
-		relatoriosPanel.setOpaque(false); // Garantir que o painel do conteúdo também seja transparente
-		relatoriosPanel.setLayout(null);
-		JLabel lblDados = new JLabel("DADOS");
-		lblDados.setBounds(440, 0, 175, 67);
-		lblDados.setForeground(new Color(255, 255, 255));
-		lblDados.setFont(new Font("Segoe UI", Font.BOLD, 50));
-		relatoriosPanel.add(lblDados);
 
-		// Adicionar os painéis de conteúdo ao painel principal
-		contentPanel.add(homePanel, "Home");
-		contentPanel.add(cadastroPanel, "Cadastro");
-		contentPanel.add(segurosPanel, "Seguros");
-		contentPanel.add(relatoriosPanel, "Relatórios");
+
+
+
+        contentPanel.add(relatoriosPanel, "Relatórios");
+    
+
 
 		// Criar os painéis "CadastroJuridica" e "CadastroFisica"
 		JPanel cadastroJuridicaPanel = new JPanel();

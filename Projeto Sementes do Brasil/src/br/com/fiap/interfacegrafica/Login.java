@@ -4,6 +4,7 @@ import java.awt.EventQueue;
 import java.awt.Font;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.sql.SQLException;
 
 import javax.swing.AbstractAction;
 import javax.swing.Action;
@@ -104,7 +105,12 @@ public class Login {
 			String senha = passwordField.getText();
 			frame.dispose();
 			
-			new Main();
+			try {
+				new Main();
+			} catch (SQLException e1) {
+				// TODO Auto-generated catch block
+				e1.printStackTrace();
+			}
 			
 
 		}
