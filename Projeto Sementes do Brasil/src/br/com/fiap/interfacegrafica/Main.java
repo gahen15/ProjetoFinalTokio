@@ -2,6 +2,7 @@ package br.com.fiap.interfacegrafica;
 
 import java.awt.CardLayout;
 import java.awt.Color;
+import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.EventQueue;
 import java.awt.Font;
@@ -14,6 +15,7 @@ import java.sql.SQLException;
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -33,7 +35,11 @@ import javax.swing.JScrollPane;
 import javax.swing.JTable;
 import javax.swing.JTextField;
 import javax.swing.ListSelectionModel;
+import javax.swing.RowSorter;
+import javax.swing.SortOrder;
 import javax.swing.table.DefaultTableModel;
+import javax.swing.table.TableCellRenderer;
+import javax.swing.table.TableRowSorter;
 
 import br.com.fiap.controller.AppController;
 import br.com.fiap.models.Cliente;
@@ -82,7 +88,8 @@ public class Main {
     }
 
     private void initialize() throws SQLException {
-        frame = new JFrame();
+    	 AppController app = AppController.getInstance();
+    	frame = new JFrame();
         frame.setBounds(0, 0, 1216, 713);
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         frame.setResizable(true);
@@ -116,7 +123,7 @@ public class Main {
         JLabel lblCadastroDeClientes = new JLabel("CADASTRO DE CLIENTES");
         lblCadastroDeClientes.setForeground(new Color(255, 255, 255));
         lblCadastroDeClientes.setFont(new Font("Segoe UI", Font.BOLD, 50));
-        lblCadastroDeClientes.setBounds(236, 11, 610, 47);
+        lblCadastroDeClientes.setBounds(235, 62, 610, 47);
         cadastroPanel.add(lblCadastroDeClientes);
 
         JPanel segurosPanel = new JPanel();
@@ -161,7 +168,7 @@ public class Main {
         listaSeguros.setOpaque(false);
 
         // Obtendo a lista de seguros
-        AppController app = AppController.getInstance();
+       
         List<TipoSeguro> listaSeguros1 = app.listarSeguros(); // Obtém todos os seguros
 
         // Criando o modelo da lista de seguros
@@ -635,6 +642,17 @@ public class Main {
 		JButton cadastrarFisicoButton = new JButton("Cadastrar");
 		cadastrarFisicoButton.setBounds(748, 601, 103, 23);
 		painelCadastroFisico.add(cadastrarFisicoButton);
+		/*
+██╗░░░░░██╗░██████╗████████╗░█████╗░  ░█████╗░██╗░░░░░██╗███████╗███╗░░██╗████████╗███████╗░██████╗
+██║░░░░░██║██╔════╝╚══██╔══╝██╔══██╗  ██╔══██╗██║░░░░░██║██╔════╝████╗░██║╚══██╔══╝██╔════╝██╔════╝
+██║░░░░░██║╚█████╗░░░░██║░░░███████║  ██║░░╚═╝██║░░░░░██║█████╗░░██╔██╗██║░░░██║░░░█████╗░░╚█████╗░
+██║░░░░░██║░╚═══██╗░░░██║░░░██╔══██║  ██║░░██╗██║░░░░░██║██╔══╝░░██║╚████║░░░██║░░░██╔══╝░░░╚═══██╗
+███████╗██║██████╔╝░░░██║░░░██║░░██║  ╚█████╔╝███████╗██║███████╗██║░╚███║░░░██║░░░███████╗██████╔╝
+╚══════╝╚═╝╚═════╝░░░░╚═╝░░░╚═╝░░╚═╝  ░╚════╝░╚══════╝╚═╝╚══════╝╚═╝░░╚══╝░░░╚═╝░░░╚══════╝╚═════╝░	 
+		 */
+		// Criando o painel que vai conter a tabela de clientes
+		
+
 		// Adicionar ação nos botões para mudar o painel de conteúdo
 		btnHome.addActionListener(new ActionListener() {
 			@Override
@@ -661,6 +679,74 @@ public class Main {
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				cardLayout.show(contentPanel, "Relatórios");
+				JPanel listaClientes = new JPanel();
+				listaClientes.setBounds(35, 81, 908, 594);
+				listaClientes.setLayout(null);
+				listaClientes.setOpaque(false);
+				relatoriosPanel.add(listaClientes);
+
+				// Criando o modelo da tabela (nome das colunas e dados)
+				String[] colunasClientes = { "ID", "Nome", "Endereço", "Telefone" };  // Adicionando "ID" como coluna
+				List<Cliente> listaClientes1 = app.listarClientes();  // Obtém todos os clientes
+
+				// Criando uma lista de dados para a tabela
+				Object[][] dados = new Object[listaClientes1.size()][colunasClientes.length];
+
+				for (int i = 0; i < listaClientes1.size(); i++) {
+				    Cliente cliente = listaClientes1.get(i);
+				    dados[i][0] = cliente.getIdCliente();  // ID do cliente
+				    dados[i][1] = cliente.getNome();  // Nome do cliente
+				    dados[i][2] = cliente.getEndereco();  // Endereço do cliente
+				    dados[i][3] = cliente.getTelefone();  // Telefone do cliente
+				}
+
+				// Criando o modelo da tabela com os dados e as colunas
+				DefaultTableModel modelClientes = new DefaultTableModel(dados, colunasClientes);
+
+				// Criando a JTable com o modelo de dados
+				JTable tableClientes = new JTable(modelClientes);
+
+				// Criando o TableRowSorter e configurando para ordenar por ID
+				TableRowSorter<DefaultTableModel> sorter = new TableRowSorter<>(modelClientes);
+				tableClientes.setRowSorter(sorter);
+
+				// Configurando a JTable para ajustar as colunas automaticamente ao tamanho do conteúdo
+				tableClientes.setAutoResizeMode(JTable.AUTO_RESIZE_OFF);
+
+				// Ajustando o tamanho das colunas de acordo com o conteúdo
+				for (int i = 0; i < tableClientes.getColumnCount(); i++) {
+				    int maxWidth = 0;
+				    for (int j = 0; j < tableClientes.getRowCount(); j++) {
+				        TableCellRenderer renderer = tableClientes.getCellRenderer(j, i);
+				        Component comp = tableClientes.prepareRenderer(renderer, j, i);
+				        maxWidth = Math.max(comp.getPreferredSize().width, maxWidth);
+				    }
+				    // Para a coluna ID, aumente a largura manualmente
+				    if (i == 0) {
+				        tableClientes.getColumnModel().getColumn(i).setPreferredWidth(maxWidth + 50);  // Aumentando um pouco a largura da coluna ID
+				    } else {
+				        tableClientes.getColumnModel().getColumn(i).setPreferredWidth(maxWidth + 10);  // Margem padrão para as outras colunas
+				    }
+				}
+
+				// Adicionando a tabela dentro de um JScrollPane para permitir rolagem
+				JScrollPane scrollPaneClientes = new JScrollPane(tableClientes);
+				scrollPaneClientes.setBounds(10, 49, 526, 521);  // Ajuste do tamanho do JScrollPane
+				listaClientes.add(scrollPaneClientes);
+
+				// Personalizando a aparência da JTable
+				tableClientes.setFont(new Font("Arial", Font.PLAIN, 14));  // Definindo uma fonte mais legível
+				tableClientes.setRowHeight(25);  // Definindo a altura das linhas
+				tableClientes.setBorder(BorderFactory.createLineBorder(Color.BLACK));  // Adicionando uma borda fina
+
+				tableClientes.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);  // Seleção de uma linha por vez
+				tableClientes.setShowGrid(true);  // Exibindo as linhas da tabela
+				tableClientes.setGridColor(Color.BLACK);  // Cor das linhas da tabela
+				tableClientes.setOpaque(false);  // Fundo transparente (se necessário)
+
+				// Ordenando a tabela pelo ID (coluna 0) em ordem crescente
+				sorter.setSortKeys(Arrays.asList(new RowSorter.SortKey(0, SortOrder.ASCENDING)));
+
 			}
 		});
 

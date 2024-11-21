@@ -97,4 +97,9 @@ public abstract class Cliente {
 
     // Método abstrato para retornar o tipo de cliente
     public abstract String getTipoCliente();
+    @Override
+    public String toString() {
+        // Formatar a string para exibir as informações do cliente de forma legível
+        return "Id: " + idCliente+", Nome: " + nome + ", Endereço: " + endereco + ", Telefone: " + telefone;
+    }
 }
