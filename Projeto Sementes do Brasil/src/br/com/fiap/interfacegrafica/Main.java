@@ -113,7 +113,7 @@ public class Main {
         homePanel.setLayout(null);
         JLabel lblHome = new JLabel("HOME");
         lblHome.setBounds(435, 11, 156, 43);
-        lblHome.setForeground(new Color(255, 255, 255));
+        lblHome.setForeground(new Color(0, 0, 0));
         lblHome.setFont(new Font("Segoe UI", Font.BOLD, 50));
         homePanel.add(lblHome);
 
@@ -652,7 +652,7 @@ public class Main {
 		 */
 		// Criando o painel que vai conter a tabela de clientes
 		
-
+		
 		// Adicionar ação nos botões para mudar o painel de conteúdo
 		btnHome.addActionListener(new ActionListener() {
 			@Override
@@ -665,6 +665,7 @@ public class Main {
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				cardLayout.show(contentPanel, "Cadastro");
+				 
 			}
 		});
 
@@ -864,9 +865,11 @@ public class Main {
 
 		public BackgroundPanel() {
 			try {
-				// Carregar a imagem de fundo corretamente
-				backgroundImage = ImageIO.read(getClass().getResource("/resources/images/background.png"));
-			} catch (IOException e) {
+			
+				backgroundImage = ImageIO.read(getClass().getResource("/resources/images/backgroundHOME.jpg"));
+			
+				
+				} catch (IOException e) {
 				e.printStackTrace();
 			}
 		}
