@@ -121,7 +121,7 @@ public class Main {
         cadastroPanel.setOpaque(false); // Garantir que o painel do conteúdo também seja transparente
         cadastroPanel.setLayout(null);
         JLabel lblCadastroDeClientes = new JLabel("CADASTRO DE CLIENTES");
-        lblCadastroDeClientes.setForeground(new Color(255, 255, 255));
+        lblCadastroDeClientes.setForeground(new Color(0, 0, 0));
         lblCadastroDeClientes.setFont(new Font("Segoe UI", Font.BOLD, 50));
         lblCadastroDeClientes.setBounds(235, 62, 610, 47);
         cadastroPanel.add(lblCadastroDeClientes);
@@ -130,9 +130,9 @@ public class Main {
         segurosPanel.setOpaque(false); // Garantir que o painel do conteúdo também seja transparente
         segurosPanel.setLayout(null);
         JLabel lblSeguros = new JLabel("SEGUROS");
-        lblSeguros.setForeground(new Color(255, 255, 255));
+        lblSeguros.setForeground(new Color(0, 0, 0));
         lblSeguros.setFont(new Font("Segoe UI", Font.BOLD, 50));
-        lblSeguros.setBounds(400, 0, 243, 67);
+        lblSeguros.setBounds(434, 58, 232, 67);
         segurosPanel.add(lblSeguros);
 
         JPanel relatoriosPanel = new JPanel();
@@ -151,7 +151,7 @@ public class Main {
 
      // Criando o painel que vai conter a lista de seguros
         JPanel listaSeguros = new JPanel();
-        listaSeguros.setBounds(35, 81, 908, 594);
+        listaSeguros.setBounds(77, 165, 908, 594);
         listaSeguros.setLayout(null); // Usando o layout absoluto para posicionamento
         segurosPanel.add(listaSeguros);
 
@@ -162,7 +162,7 @@ public class Main {
 
         // Adicionando a JList dentro de um JScrollPane para permitir rolagem
         JScrollPane scrollPane = new JScrollPane(list);
-        scrollPane.setBounds(10, 49, 429, 226);
+        scrollPane.setBounds(10, 144, 595, 243);
         scrollPane.setOpaque(false);  // Ajustando a posição e o tamanho
         listaSeguros.add(scrollPane);
         listaSeguros.setOpaque(false);
@@ -180,35 +180,35 @@ public class Main {
 
         // Personalizando a aparência da JList
         list.setOpaque(false); // Fundo mais suave
-        list.setFont(new Font("Arial", Font.PLAIN, 14));  // Definindo uma fonte mais legível
+        list.setFont(new Font("Arial", Font.PLAIN, 20));  // Definindo uma fonte mais legível
         list.setBorder(BorderFactory.createLineBorder(Color.BLACK));  // Adicionando uma borda fina
 
         // Adicionando título
-        JLabel lblNewLabel = new JLabel("Associar Seguro ao Cliente");
+        JLabel lblNewLabel = new JLabel("Associar Seguro");
         lblNewLabel.setForeground(new Color(0, 0, 0));
         lblNewLabel.setFont(new Font("Arial", Font.BOLD, 24));
-        lblNewLabel.setBounds(557, 49, 404, 40);
+        lblNewLabel.setBounds(674, 154, 203, 40);
         listaSeguros.add(lblNewLabel);
 
         // Criando campo de texto para inserir ID do Cliente
         JTextField idClienteField = new JTextField();
-        idClienteField.setBounds(557, 120, 250, 30);
+        idClienteField.setBounds(648, 197, 250, 40);
         listaSeguros.add(idClienteField);
 
         // Criando botão de pesquisa para buscar o cliente
         JButton btnPesquisar = new JButton("Pesquisar Cliente");
-        btnPesquisar.setBounds(557, 160, 250, 40);
+        btnPesquisar.setBounds(648, 247, 250, 40);
         listaSeguros.add(btnPesquisar);
 
         // Criando botão para associar o seguro ao cliente
         JButton btnAssociar = new JButton("Associar Seguro");
-        btnAssociar.setBounds(557, 210, 250, 40);
+        btnAssociar.setBounds(648, 297, 250, 40);
         btnAssociar.setEnabled(false); // Inicialmente, desabilitado
         listaSeguros.add(btnAssociar);
 
         // Criando botão para remover o seguro
         JButton btnRemover = new JButton("Remover Seguro");
-        btnRemover.setBounds(557, 260, 250, 40);
+        btnRemover.setBounds(648, 347, 250, 40);
         btnRemover.setEnabled(false); // Inicialmente, desabilitado
         listaSeguros.add(btnRemover);
 
@@ -219,7 +219,7 @@ public class Main {
         tableCliente.setBounds(557, 310, 400, 200);
         JScrollPane scrollPane_1 = new JScrollPane(tableCliente);
         scrollPane_1.setSize(888, 70);
-        scrollPane_1.setLocation(10, 344);
+        scrollPane_1.setLocation(10, 23);
         listaSeguros.add(scrollPane_1);  // Adicionando a tabela ao painel
      // Ajustando a largura das colunas
         tableCliente.getColumnModel().getColumn(0).setPreferredWidth(80); // ID Cliente
@@ -368,7 +368,8 @@ public class Main {
 		cadastroJuridicaPanel.setOpaque(false);
 		cadastroJuridicaPanel.setLayout(null);
 		JLabel lblCadastroJuridica = new JLabel("CADASTRO JURÍDICO");
-		lblCadastroJuridica.setForeground(new Color(255, 255, 255));
+		lblCadastroJuridica.setBackground(new Color(0, 0, 0));
+		lblCadastroJuridica.setForeground(new Color(0, 0, 0));
 		lblCadastroJuridica.setFont(new Font("Segoe UI", Font.BOLD, 50));
 		lblCadastroJuridica.setBounds(253, 11, 516, 47);
 		cadastroJuridicaPanel.add(lblCadastroJuridica);
