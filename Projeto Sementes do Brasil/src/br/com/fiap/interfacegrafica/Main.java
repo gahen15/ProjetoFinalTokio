@@ -15,7 +15,6 @@ import java.sql.SQLException;
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -35,8 +34,7 @@ import javax.swing.JScrollPane;
 import javax.swing.JTable;
 import javax.swing.JTextField;
 import javax.swing.ListSelectionModel;
-import javax.swing.RowSorter;
-import javax.swing.SortOrder;
+import javax.swing.RowFilter;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableCellRenderer;
 import javax.swing.table.TableRowSorter;
@@ -45,6 +43,8 @@ import br.com.fiap.controller.AppController;
 import br.com.fiap.models.Cliente;
 import br.com.fiap.models.EstadoCivil;
 import br.com.fiap.models.TipoSeguro;
+import br.com.fiap.models.submodel.Empresa;
+import br.com.fiap.models.submodel.PessoaFisica;
 
 
 public class Main {
@@ -681,6 +681,7 @@ public class Main {
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				cardLayout.show(contentPanel, "Relatórios");
+				// Criando o painel de lista de clientes
 				JPanel listaClientes = new JPanel();
 				listaClientes.setBounds(35, 81, 908, 594);
 				listaClientes.setLayout(null);
@@ -688,8 +689,8 @@ public class Main {
 				relatoriosPanel.add(listaClientes);
 
 				// Criando o modelo da tabela (nome das colunas e dados)
-				String[] colunasClientes = { "ID", "Nome", "Endereço", "Telefone" };  // Adicionando "ID" como coluna
-				List<Cliente> listaClientes1 = app.listarClientes();  // Obtém todos os clientes
+				String[] colunasClientes = { "ID", "Nome", "Endereço", "Telefone", "Documento" }; // Adicionando "Documento" como coluna
+				List<Cliente> listaClientes1 = app.listarClientes(); // Obtém todos os clientes
 
 				// Criando uma lista de dados para a tabela
 				Object[][] dados = new Object[listaClientes1.size()][colunasClientes.length];
@@ -697,9 +698,20 @@ public class Main {
 				for (int i = 0; i < listaClientes1.size(); i++) {
 				    Cliente cliente = listaClientes1.get(i);
 				    dados[i][0] = cliente.getIdCliente();  // ID do cliente
-				    dados[i][1] = cliente.getNome();  // Nome do cliente
-				    dados[i][2] = cliente.getEndereco();  // Endereço do cliente
-				    dados[i][3] = cliente.getTelefone();  // Telefone do cliente
+				    dados[i][1] = cliente.getNome();       // Nome do cliente
+				    dados[i][2] = cliente.getEndereco();   // Endereço do cliente
+				    dados[i][3] = cliente.getTelefone();   // Telefone do cliente
+
+				    // Condicional para verificar o tipo de cliente e obter o documento correto
+				    if (cliente instanceof PessoaFisica) {
+				        PessoaFisica pf = (PessoaFisica) cliente;
+				        dados[i][4] = pf.getCpf(); // CPF da pessoa física
+				    } else if (cliente instanceof Empresa) {
+				        Empresa empresa = (Empresa) cliente;
+				        dados[i][4] = empresa.getCnpj(); // CNPJ da empresa
+				    } else {
+				        dados[i][4] = "Documento desconhecido"; // Caso não seja nem PF nem Empresa
+				    }
 				}
 
 				// Criando o modelo da tabela com os dados e as colunas
@@ -708,14 +720,21 @@ public class Main {
 				// Criando a JTable com o modelo de dados
 				JTable tableClientes = new JTable(modelClientes);
 
-				// Criando o TableRowSorter e configurando para ordenar por ID
+				// Criando o TableRowSorter
 				TableRowSorter<DefaultTableModel> sorter = new TableRowSorter<>(modelClientes);
 				tableClientes.setRowSorter(sorter);
 
-				// Configurando a JTable para ajustar as colunas automaticamente ao tamanho do conteúdo
+				// Configurando a JTable
 				tableClientes.setAutoResizeMode(JTable.AUTO_RESIZE_OFF);
+				tableClientes.setFont(new Font("Arial", Font.PLAIN, 14));
+				tableClientes.setRowHeight(25);
+				tableClientes.setBorder(BorderFactory.createLineBorder(Color.BLACK));
+				tableClientes.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+				tableClientes.setShowGrid(true);
+				tableClientes.setGridColor(Color.BLACK);
+				tableClientes.setOpaque(false);
 
-				// Ajustando o tamanho das colunas de acordo com o conteúdo
+				// Ajustando o tamanho das colunas
 				for (int i = 0; i < tableClientes.getColumnCount(); i++) {
 				    int maxWidth = 0;
 				    for (int j = 0; j < tableClientes.getRowCount(); j++) {
@@ -723,31 +742,47 @@ public class Main {
 				        Component comp = tableClientes.prepareRenderer(renderer, j, i);
 				        maxWidth = Math.max(comp.getPreferredSize().width, maxWidth);
 				    }
-				    // Para a coluna ID, aumente a largura manualmente
-				    if (i == 0) {
-				        tableClientes.getColumnModel().getColumn(i).setPreferredWidth(maxWidth + 50);  // Aumentando um pouco a largura da coluna ID
-				    } else {
-				        tableClientes.getColumnModel().getColumn(i).setPreferredWidth(maxWidth + 10);  // Margem padrão para as outras colunas
-				    }
+				    tableClientes.getColumnModel().getColumn(i).setPreferredWidth(maxWidth + 10);
 				}
 
-				// Adicionando a tabela dentro de um JScrollPane para permitir rolagem
+				// Adicionando a tabela dentro de um JScrollPane
 				JScrollPane scrollPaneClientes = new JScrollPane(tableClientes);
-				scrollPaneClientes.setBounds(10, 49, 526, 521);  // Ajuste do tamanho do JScrollPane
+				scrollPaneClientes.setBounds(10, 49, 526, 521);
 				listaClientes.add(scrollPaneClientes);
 
-				// Personalizando a aparência da JTable
-				tableClientes.setFont(new Font("Arial", Font.PLAIN, 14));  // Definindo uma fonte mais legível
-				tableClientes.setRowHeight(25);  // Definindo a altura das linhas
-				tableClientes.setBorder(BorderFactory.createLineBorder(Color.BLACK));  // Adicionando uma borda fina
+				// Criando os componentes de pesquisa
+				JTextField txtPesquisar = new JTextField();
+				txtPesquisar.setBounds(10, 10, 200, 30);
+				listaClientes.add(txtPesquisar);
 
-				tableClientes.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);  // Seleção de uma linha por vez
-				tableClientes.setShowGrid(true);  // Exibindo as linhas da tabela
-				tableClientes.setGridColor(Color.BLACK);  // Cor das linhas da tabela
-				tableClientes.setOpaque(false);  // Fundo transparente (se necessário)
+				JButton btnPesquisar = new JButton("Pesquisar");
+				btnPesquisar.setBounds(220, 10, 120, 30);
+				listaClientes.add(btnPesquisar);
 
-				// Ordenando a tabela pelo ID (coluna 0) em ordem crescente
-				sorter.setSortKeys(Arrays.asList(new RowSorter.SortKey(0, SortOrder.ASCENDING)));
+				JButton btnLimparBusca = new JButton("Limpar Busca");
+				btnLimparBusca.setBounds(350, 10, 120, 30);
+				listaClientes.add(btnLimparBusca);
+
+				// Ação do botão Pesquisar
+				btnPesquisar.addActionListener(e2 -> {
+				    String termoPesquisa = txtPesquisar.getText().trim();
+				    if (!termoPesquisa.isEmpty()) {
+				        try {
+				            // Tentando filtrar por ID (primeira coluna)
+				            int id = Integer.parseInt(termoPesquisa);
+				            sorter.setRowFilter(RowFilter.numberFilter(RowFilter.ComparisonType.EQUAL, id, 0));
+				        } catch (NumberFormatException ex) {
+				            // Caso não seja um número, filtra por Documento (quarta coluna)
+				            sorter.setRowFilter(RowFilter.regexFilter(termoPesquisa, 4));
+				        }
+				    }
+				});
+
+				// Ação do botão Limpar Busca
+				btnLimparBusca.addActionListener(e2 -> {
+				    sorter.setRowFilter(null); // Remove o filtro e exibe todos os dados
+				    txtPesquisar.setText(""); // Limpa o campo de texto
+				});
 
 			}
 		});
@@ -814,7 +849,17 @@ public class Main {
 					AppController app = AppController.getInstance();
 					app.cadastrarClienteFisico(nome, email, telefone, endereco, cpf, estadoCivil, profissao,
 							dataNascimento);
+					nomeField.setText("");
+					emailField.setText("");
+					telefoneField.setText("");
+					enderecoField.setText("");
+					cpfField.setText("");
+					profissaoField.setText("");
+					dataField.setText("");
+					buttonGroup.clearSelection();
 					cardLayout.show(contentPanel, "Cadastro");
+					JOptionPane.showMessageDialog(null, "Cadastro Realizado com Sucesso!");
+					
 					
 				} catch (ParseException ex) {
 					JOptionPane.showMessageDialog(null, "A data de nascimento deve estar no formato dd/MM/yyyy.",
@@ -845,9 +890,15 @@ public class Main {
 					// Chamando o método do controlador
 					AppController app = AppController.getInstance();
 					app.cadastrarClienteEmpresa(nome, email, telefone, endereco, cnpj, nomeFantasia,razaoSocial);
-						
+					nomeFieldJuridica.setText("");
+					emailFieldJuridica.setText("");
+					telefoneFieldJuridica.setText("");
+					enderecoFieldJuridica.setText("");
+					cnpjFieldJuridica.setText("");
+					nomeFantasiaFieldJuridica.setText("");
+					razaoSocialFieldJuridica.setText("");
 					cardLayout.show(contentPanel, "Cadastro");
-					
+					JOptionPane.showMessageDialog(null, "Cadastro Realizado com Sucesso!");
 				}  catch (SQLException ex) {
 					ex.printStackTrace();
 					JOptionPane.showMessageDialog(null, "Erro ao salvar os dados no banco.", "Erro",
