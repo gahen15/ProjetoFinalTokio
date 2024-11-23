@@ -1,23 +1,16 @@
--- Remover as triggers associadas às tabelas
-DROP TRIGGER trg_apolice_id;
+-- Remover os triggers
 DROP TRIGGER trg_cliente;
+DROP TRIGGER trg_apolice_id;
+
+-- Remover as tabelas em ordem correta (dependências de chave estrangeira)
+DROP TABLE ClienteApolice CASCADE CONSTRAINTS;
+DROP TABLE T_Apolice CASCADE CONSTRAINTS;
+DROP TABLE T_Empresa CASCADE CONSTRAINTS;
+DROP TABLE T_PessoaFisica CASCADE CONSTRAINTS;
+DROP TABLE ClienteSeguro CASCADE CONSTRAINTS;
+DROP TABLE TipoSeguro CASCADE CONSTRAINTS;
+DROP TABLE T_Cliente CASCADE CONSTRAINTS;
 
 -- Remover as sequências
 DROP SEQUENCE seq_apolice;
 DROP SEQUENCE seq_cliente;
-
--- Remover a tabela de relacionamento ClienteSeguro
-DROP TABLE ClienteSeguro CASCADE CONSTRAINTS;
-
--- Remover as tabelas dependentes
-DROP TABLE T_PessoaFisica CASCADE CONSTRAINTS;
-DROP TABLE T_Empresa CASCADE CONSTRAINTS;
-
--- Remover as tabelas principais
-DROP TABLE T_Cliente CASCADE CONSTRAINTS;
-DROP TABLE T_Apolice CASCADE CONSTRAINTS;
-
--- Remover a tabela TipoSeguro
-DROP TABLE TipoSeguro CASCADE CONSTRAINTS;
-
--- Remover a sequência seq_cliente (já foi feita acima)
