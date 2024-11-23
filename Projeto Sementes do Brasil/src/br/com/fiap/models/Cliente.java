@@ -10,11 +10,13 @@ public abstract class Cliente {
     private Long idCliente;
     private String nome, email, telefone, endereco;
     private Date dataCadastro;
-    private List<TipoSeguro> seguros;  // Lista para armazenar os seguros associados ao cliente
+    private List<TipoSeguro> seguros;  // Lista para armazenar os tipos de seguros associados ao cliente
+    private List<Apolice> apolices;    // Lista para armazenar as apólices associadas ao cliente
 
     // Construtor vazio
     public Cliente() {
         this.seguros = new ArrayList<>();  // Inicializa a lista de seguros
+        this.apolices = new ArrayList<>(); // Inicializa a lista de apólices
     }
 
     // Construtor com parâmetros
@@ -25,6 +27,7 @@ public abstract class Cliente {
         this.endereco = endereco;
         this.dataCadastro = new java.sql.Date(System.currentTimeMillis());
         this.seguros = new ArrayList<>();  // Inicializa a lista de seguros
+        this.apolices = new ArrayList<>(); // Inicializa a lista de apólices
     }
 
     // Getters e Setters
@@ -81,7 +84,7 @@ public abstract class Cliente {
         return seguros;
     }
 
-    // Método para adicionar um seguro à lista
+    // Método para adicionar um seguro à lista de seguros
     public void adicionarSeguro(TipoSeguro seguro) {
         if (seguro != null) {
             this.seguros.add(seguro);
@@ -95,11 +98,31 @@ public abstract class Cliente {
         }
     }
 
+    // Getter para a lista de apólices
+    public List<Apolice> getApolices() {
+        return apolices;
+    }
+
+    // Método para adicionar uma apólice à lista de apólices
+    public void adicionarApolice(Apolice apolice) {
+        if (apolice != null) {
+            this.apolices.add(apolice);
+        }
+    }
+
+    // Método para remover uma apólice da lista de apólices
+    public void removerApolice(Apolice apolice) {
+        if (apolice != null) {
+            this.apolices.remove(apolice);
+        }
+    }
+
     // Método abstrato para retornar o tipo de cliente
     public abstract String getTipoCliente();
+
     @Override
     public String toString() {
         // Formatar a string para exibir as informações do cliente de forma legível
-        return "Id: " + idCliente+", Nome: " + nome + ", Endereço: " + endereco + ", Telefone: " + telefone;
+        return "Id: " + idCliente + ", Nome: " + nome + ", Endereço: " + endereco + ", Telefone: " + telefone;
     }
 }

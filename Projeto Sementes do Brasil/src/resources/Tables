@@ -30,16 +30,18 @@ END;
 CREATE TABLE TipoSeguro (
     idTipoSeguro NUMBER PRIMARY KEY,
     descricao VARCHAR2(255) NOT NULL,
-    categoria VARCHAR2(20) NOT NULL -- Categoria: 'Pessoa Física' ou 'Pessoa Jurídica'
+    categoria VARCHAR2(20) NOT NULL,  -- Categoria: 'Pessoa Física' ou 'Pessoa Jurídica'
+    valor NUMBER NOT NULL              -- Valor do seguro associado ao tipo de seguro
 );
 
+
 -- Inserção de dados na tabela TipoSeguro
-INSERT INTO TipoSeguro (idTipoSeguro, descricao, categoria) VALUES (1, 'Individual', 'Pessoa Física');
-INSERT INTO TipoSeguro (idTipoSeguro, descricao, categoria) VALUES (2, 'Estagiário', 'Pessoa Física');
-INSERT INTO TipoSeguro (idTipoSeguro, descricao, categoria) VALUES (3, 'Escolar', 'Pessoa Jurídica');
-INSERT INTO TipoSeguro (idTipoSeguro, descricao, categoria) VALUES (4, 'Turismo', 'Pessoa Jurídica');
-INSERT INTO TipoSeguro (idTipoSeguro, descricao, categoria) VALUES (5, 'Transporte de Pessoas', 'Pessoa Jurídica');
-INSERT INTO TipoSeguro (idTipoSeguro, descricao, categoria) VALUES (6, 'Coletivo', 'Pessoa Jurídica');
+INSERT INTO TipoSeguro (idTipoSeguro, descricao, categoria, valor) VALUES (1, 'Individual', 'Pessoa Física', 150.00);
+INSERT INTO TipoSeguro (idTipoSeguro, descricao, categoria, valor) VALUES (2, 'Estagiário', 'Pessoa Física', 120.00);
+INSERT INTO TipoSeguro (idTipoSeguro, descricao, categoria, valor) VALUES (3, 'Escolar', 'Pessoa Jurídica', 200.00);
+INSERT INTO TipoSeguro (idTipoSeguro, descricao, categoria, valor) VALUES (4, 'Turismo', 'Pessoa Jurídica', 250.00);
+INSERT INTO TipoSeguro (idTipoSeguro, descricao, categoria, valor) VALUES (5, 'Transporte de Pessoas', 'Pessoa Jurídica', 300.00);
+INSERT INTO TipoSeguro (idTipoSeguro, descricao, categoria, valor) VALUES (6, 'Coletivo', 'Pessoa Jurídica', 350.00);
 
 -- Criação da tabela ClienteSeguro
 CREATE TABLE ClienteSeguro (
@@ -68,3 +70,39 @@ CREATE TABLE T_Empresa (
     razaoSocial VARCHAR2(255),
     CONSTRAINT fk_cliente_empresa FOREIGN KEY (idCliente) REFERENCES T_Cliente(idCliente)
 );
+
+-- Criar a sequência para o id da apólice
+CREATE SEQUENCE seq_apolice
+START WITH 1
+INCREMENT BY 1;
+
+-- Criar a tabela T_Apolice
+CREATE TABLE T_Apolice (
+    id NUMBER PRIMARY KEY,                           -- Identificador único da apólice
+    idCliente NUMBER NOT NULL,                       -- Relacionamento com o cliente
+    idTipoSeguro NUMBER NOT NULL,                    -- Relacionamento com o tipo de seguro
+    dataEmissao DATE NOT NULL,                       -- Data de emissão da apólice
+    valor NUMBER NOT NULL,                           -- Valor da apólice
+    status VARCHAR2(50) NOT NULL,                    -- Status da apólice
+    FOREIGN KEY (idCliente) REFERENCES T_Cliente(idCliente),           -- Chave estrangeira para o cliente
+    FOREIGN KEY (idTipoSeguro) REFERENCES TipoSeguro(idTipoSeguro)  -- Chave estrangeira para TipoSeguro
+);
+-- Criação da tabela ClienteApolice
+CREATE TABLE ClienteApolice (
+    idCliente NUMBER NOT NULL,                       -- Relacionamento com o cliente
+    idApolice NUMBER NOT NULL,                       -- Relacionamento com a apólice
+    dataInicio DATE NOT NULL,                        -- Data de início da associação do cliente com a apólice
+    dataFim DATE,                                    -- Data de término (null se ainda ativa)
+    PRIMARY KEY (idCliente, idApolice),              -- Chave composta para evitar duplicidades
+    CONSTRAINT fk_cliente_apolice_cliente FOREIGN KEY (idCliente) REFERENCES T_Cliente(idCliente),
+    CONSTRAINT fk_cliente_apolice_apolice FOREIGN KEY (idApolice) REFERENCES T_Apolice(id)
+);
+
+-- Criar um trigger para auto-incrementar o campo 'id' utilizando a sequência
+CREATE OR REPLACE TRIGGER trg_apolice_id
+BEFORE INSERT ON T_Apolice
+FOR EACH ROW
+BEGIN
+    :NEW.id := seq_apolice.NEXTVAL;
+END;
+/

@@ -4,19 +4,24 @@ public class TipoSeguro {
     private long idTipoSeguro;
     private String descricao;
     private String categoria;
+    private double valor;  // Novo atributo para armazenar o valor do seguro
 
-    public TipoSeguro() {}
-    public TipoSeguro(long idTipoSeguro, String descricao, String categoria) {
+    // Construtor atualizado para incluir o valor
+    public TipoSeguro(long idTipoSeguro, String descricao, String categoria, double valor) {
         this.idTipoSeguro = idTipoSeguro;
         this.descricao = descricao;
         this.categoria = categoria;
+        this.valor = valor;  // Atribuindo o valor
     }
+
+    // Construtor sem valor (caso necessário)
+    public TipoSeguro() {}
 
     public long getIdTipoSeguro() {
         return idTipoSeguro;
     }
 
-    public void setIdTipoSeguro(int idTipoSeguro) {
+    public void setIdTipoSeguro(long idTipoSeguro) {
         this.idTipoSeguro = idTipoSeguro;
     }
 
@@ -36,13 +41,18 @@ public class TipoSeguro {
         this.categoria = categoria;
     }
 
+    // Getter e setter para o valor
+    public double getValor() {
+        return valor;
+    }
+
+    public void setValor(double valor) {
+        this.valor = valor;
+    }
+
+    // Atualizando o método toString para incluir o valor
     @Override
     public String toString() {
-        return "ID: " + idTipoSeguro + ", Tipo: " + descricao + ", Categoria: " + categoria;
+        return "ID: " + idTipoSeguro + ", Tipo: " + descricao + ", Categoria: " + categoria + ", Valor: R$ " + valor;
     }
-  
-	public void setId(long long1) {
-		this.idTipoSeguro = long1;
-		
-	}
 }

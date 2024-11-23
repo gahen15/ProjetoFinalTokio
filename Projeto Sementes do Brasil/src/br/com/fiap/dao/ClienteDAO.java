@@ -9,8 +9,10 @@ import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.List;
 
+import br.com.fiap.models.Apolice;
 import br.com.fiap.models.Cliente;
 import br.com.fiap.models.EstadoCivil;
+import br.com.fiap.models.TipoSeguro;
 import br.com.fiap.models.submodel.Empresa;
 import br.com.fiap.models.submodel.PessoaFisica;
 
@@ -21,8 +23,37 @@ public class ClienteDAO {
 	public ClienteDAO(Connection connection) {
 		this.connection = connection;
 	}
+	public TipoSeguro buscarTipoSeguroPorId(long idTipoSeguro) {
+	    TipoSeguro tipoSeguro = null;
+	    String sql = "SELECT * FROM TipoSeguro WHERE idTipoSeguro = ?";
+	    
+	    try (PreparedStatement stmt = connection.prepareStatement(sql)) {
+	        stmt.setLong(1, idTipoSeguro);
+	        
+	        try (ResultSet rs = stmt.executeQuery()) {
+	            if (rs.next()) {
+	                tipoSeguro = new TipoSeguro(
+	                    rs.getLong("idTipoSeguro"),
+	                    rs.getString("descricao"),
+	                    rs.getString("categoria"),
+	                    rs.getDouble("valor")  // Recuperando o valor
+	                );
+	            }
+	        }
+	    } catch (SQLException e) {
+	        throw new RuntimeException("Erro ao buscar TipoSeguro", e);
+	    }
+	    
+	    return tipoSeguro;
+	}
 
-	public void InserirCliente(Cliente cliente) {
+
+
+	public void InserirApolice(Apolice apolice, Cliente cliente) {
+		
+	}
+		
+		public void InserirCliente(Cliente cliente) {
 	    String sql = "INSERT INTO T_Cliente (idCliente, nome, email, telefone, endereco, tipoCliente, dataCadastro) "
 	            + "VALUES (seq_cliente.NEXTVAL, ?, ?, ?, ?, ?, ?)";
 
@@ -111,6 +142,49 @@ public class ClienteDAO {
 	        throw new RuntimeException("Erro ao criar cliente", e);
 	    }
 	}
+	public void adicionarApoliceAoCliente(long idCliente, Apolice apolice) {
+	    String sql = "INSERT INTO T_Apolice (idCliente, idTipoSeguro, dataEmissao, valor, status) "
+	               + "VALUES (?, ?, ?, ?, ?)";
+	    try (PreparedStatement stmt = connection.prepareStatement(sql)) {
+	        stmt.setLong(1, idCliente); // Definir idCliente como chave estrangeira
+	        stmt.setLong(2, apolice.getTipoSeguro().getIdTipoSeguro()); // Definir idTipoSeguro para o tipo de seguro
+	        stmt.setDate(3, new java.sql.Date(apolice.getDataEmissao().getTime())); // Data de emissão
+	        stmt.setDouble(4, apolice.getValor()); // Valor da apólice
+	        stmt.setString(5, apolice.getStatus()); // Status da apólice
+	        stmt.executeUpdate();
+	    } catch (SQLException e) {
+	        throw new RuntimeException("Erro ao adicionar apólice ao cliente", e);
+	    }
+	}
+	/*public Apolice buscarApolicePorId(long idApolice) {
+	    Apolice apolice = null;
+	    String sql = "SELECT id, idTipoSeguro, dataEmissao, valor, status FROM T_Apolice WHERE id = ?";
+	    
+	    try (PreparedStatement stmt = connection.prepareStatement(sql)) {
+	        stmt.setLong(1, idApolice);  // Define o ID da apólice na consulta
+	        try (ResultSet rs = stmt.executeQuery()) {
+	            if (rs.next()) {
+	                // Buscar o TipoSeguro associado ao ID da apólice
+	                TipoSeguro tipoSeguro = buscarTipoSeguroPorId(rs.getLong("idTipoSeguro"));
+	                
+	                apolice = new Apolice(
+	                    rs.getLong("id"),
+	                    null,  // Cliente será recuperado depois, se necessário
+	                    tipoSeguro,  // TipoSeguro associado
+	                    rs.getDate("dataEmissao"),
+	                    rs.getDouble("valor"),
+	                    rs.getString("status")
+	                );
+	            }
+	        }
+	    } catch (SQLException e) {
+	        throw new RuntimeException("Erro ao buscar apólice por ID", e);
+	    }
+	    
+	    return apolice;
+	}
+
+*/
 	public void deletarCliente(long id) {
 		String deletePessoaFisicaSql = "DELETE FROM T_PessoaFisica WHERE idCliente = ?";
 		String deleteEmpresaSql = "DELETE FROM T_Empresa WHERE idCliente = ?";

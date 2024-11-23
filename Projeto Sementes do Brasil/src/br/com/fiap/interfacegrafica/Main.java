@@ -40,6 +40,7 @@ import javax.swing.table.TableCellRenderer;
 import javax.swing.table.TableRowSorter;
 
 import br.com.fiap.controller.AppController;
+import br.com.fiap.models.Apolice;
 import br.com.fiap.models.Cliente;
 import br.com.fiap.models.EstadoCivil;
 import br.com.fiap.models.TipoSeguro;
@@ -106,16 +107,123 @@ public class Main {
         contentPanel.setBounds(160, 0, 1056, 713); // Ajuste do tamanho do painel à direita
         contentPanel.setOpaque(false); // Deixar o painel de conteúdo transparente
         frame.getContentPane().add(contentPanel);
+     // Criando o painel para as apólices
+        JPanel apolicesPanel = new JPanel();
+        apolicesPanel.setOpaque(false);
+        apolicesPanel.setLayout(null);
 
-        // Criar os painéis de conteúdo (páginas)
-        JPanel homePanel = new JPanel();
-        homePanel.setOpaque(false);
-        homePanel.setLayout(null);
-        JLabel lblHome = new JLabel("HOME");
-        lblHome.setBounds(435, 11, 156, 43);
-        lblHome.setForeground(new Color(0, 0, 0));
-        lblHome.setFont(new Font("Segoe UI", Font.BOLD, 50));
-        homePanel.add(lblHome);
+        // Título da página de apólices
+        JLabel lblApolices = new JLabel("APÓLICES");
+        lblApolices.setForeground(new Color(0, 0, 0));
+        lblApolices.setFont(new Font("Segoe UI", Font.BOLD, 50));
+        lblApolices.setBounds(434, 58, 232, 67);
+        apolicesPanel.add(lblApolices);
+
+        // Adicionando ao conteúdo
+        contentPanel.add(apolicesPanel, "Apolices");
+
+        // Criando o painel de lista de apólices
+        JPanel listaApolices = new JPanel();
+        listaApolices.setBounds(77, 165, 908, 594);
+        listaApolices.setLayout(null);
+        apolicesPanel.add(listaApolices);
+
+        // Criando o modelo para a JList
+        DefaultListModel<String> modelApolicesTable = new DefaultListModel<>();
+        JList<String> listApolices = new JList<>(modelApolicesTable);  // Passando o modelo para a JList
+        listApolices.setLayoutOrientation(JList.VERTICAL);  
+        listApolices.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+
+        // Adicionando a JList dentro de um JScrollPane para rolagem
+        JScrollPane scrollPaneApolices = new JScrollPane(listApolices);
+        scrollPaneApolices.setBounds(10, 144, 595, 243);
+        scrollPaneApolices.setOpaque(false);
+        listaApolices.add(scrollPaneApolices);
+
+        // Campo de texto para ID do cliente
+        JTextField idClienteFieldApolice = new JTextField();
+        idClienteFieldApolice.setBounds(648, 197, 250, 40);
+        listaApolices.add(idClienteFieldApolice);
+
+        // Campo de texto para ID da apólice (nova funcionalidade)
+        JTextField idApoliceField = new JTextField();
+        idApoliceField.setBounds(648, 297, 250, 40); // Coloque em uma posição adequada
+        listaApolices.add(idApoliceField);
+
+        // Botão para pesquisar cliente
+        JButton btnPesquisarApolice = new JButton("Pesquisar Cliente");
+        btnPesquisarApolice.setBounds(648, 247, 250, 40);
+        listaApolices.add(btnPesquisarApolice);
+
+        // Botões para associar e remover apólice
+        JButton btnAssociarApolice = new JButton("Associar Apólice");
+        btnAssociarApolice.setBounds(648, 347, 250, 40);
+        btnAssociarApolice.setEnabled(false);  // Inicialmente desabilitado
+        listaApolices.add(btnAssociarApolice);
+
+        JButton btnRemoverApolice = new JButton("Remover Apólice");
+        btnRemoverApolice.setBounds(648, 397, 250, 40);
+        btnRemoverApolice.setEnabled(false);  // Inicialmente desabilitado
+        listaApolices.add(btnRemoverApolice);
+
+        // Lógica para pesquisar cliente e apólices
+     /*   btnPesquisarApolice.addActionListener(e -> {
+            String idClienteText = idClienteFieldApolice.getText();
+            String idApoliceText = idApoliceField.getText();
+
+            if (!idClienteText.isEmpty()) {
+                try {
+                    long idCliente = Long.parseLong(idClienteText);
+                    Cliente cliente = app.buscarClientePorId(idCliente);  // Método para buscar cliente
+
+                    if (cliente != null) {
+                        // Se o ID da apólice for fornecido, buscar por ID da apólice
+                        if (!idApoliceText.isEmpty()) {
+                            long idApolice = Long.parseLong(idApoliceText);
+                            Apolice apolice = app.buscarApolicePorId(idApolice);
+
+                            if (apolice != null && apolice.getCliente().getIdCliente() == idCliente) {
+                                modelApolicesTable.clear();  // Limpa a lista antes de adicionar
+                                modelApolicesTable.addElement(apolice.toString());  // Exibe a apólice
+
+                                btnAssociarApolice.setEnabled(true);
+                                btnRemoverApolice.setEnabled(true);
+                            } else {
+                                JOptionPane.showMessageDialog(frame, "Apólice não encontrada ou não pertence a este cliente.", "Erro", JOptionPane.ERROR_MESSAGE);
+                                btnAssociarApolice.setEnabled(false);
+                                btnRemoverApolice.setEnabled(false);
+                            }
+                        } else {
+                            // Se o ID da apólice não for fornecido, listar todas as apólices do cliente
+                            List<Apolice> apolicesAssociadas = app.listarApolicesDoCliente(idCliente);
+                            modelApolicesTable.clear();  // Limpa a lista antes de adicionar
+
+                            for (Apolice apolice : apolicesAssociadas) {
+                                modelApolicesTable.addElement(apolice.toString());  // Exibe as apólices
+                            }
+
+                            btnAssociarApolice.setEnabled(true);
+                            btnRemoverApolice.setEnabled(true);
+                        }
+                        
+                        // Atualizar a interface
+                        listApolices.revalidate();  // Forçar a revalidação da JList
+                        listApolices.repaint();     // Forçar o repintar da JList
+                    } else {
+                        JOptionPane.showMessageDialog(frame, "Cliente não encontrado.", "Erro", JOptionPane.ERROR_MESSAGE);
+                        btnAssociarApolice.setEnabled(false);
+                        btnRemoverApolice.setEnabled(false);
+                    }
+                } catch (NumberFormatException ex) {
+                    JOptionPane.showMessageDialog(frame, "Por favor, insira um ID válido.", "Erro", JOptionPane.ERROR_MESSAGE);
+                } catch (SQLException e1) {
+                    e1.printStackTrace();
+                }
+            } else {
+                JOptionPane.showMessageDialog(frame, "Por favor, insira o ID do cliente.", "Erro", JOptionPane.ERROR_MESSAGE);
+            }
+        });
+*/
 
         JPanel cadastroPanel = new JPanel();
         cadastroPanel.setOpaque(false); // Garantir que o painel do conteúdo também seja transparente
@@ -145,7 +253,7 @@ public class Main {
         relatoriosPanel.add(lblDados);
 
         // Adicionar os painéis de conteúdo ao painel principal
-        contentPanel.add(homePanel, "Home");
+
         contentPanel.add(cadastroPanel, "Cadastro");
         contentPanel.add(segurosPanel, "Seguros");
 
@@ -271,7 +379,7 @@ public class Main {
             }
         });
 
-        // Ouvinte para o botão de associação de seguro
+     // Ouvinte para o botão de associação de seguro
         btnAssociar.addActionListener(e -> {
             String seguroSelecionado = list.getSelectedValue();
             String idClienteText = idClienteField.getText();
@@ -293,6 +401,11 @@ public class Main {
                             if (tipoSeguroSelecionado.getCategoria().equals(cliente.getTipoCliente())) {
                                 // Chama o controlador para associar o seguro
                                 app.associarSeguroAoCliente(idCliente, tipoSeguroSelecionado);
+                                Apolice novaApolice = new Apolice(cliente, tipoSeguroSelecionado, tipoSeguroSelecionado.getValor());
+                                novaApolice.setStatus("Ativa");
+                                app.inserirApolice(novaApolice);
+                                // Corrigindo chamada do método criarApolice
+                               
                                 JOptionPane.showMessageDialog(frame, "Seguro associado com sucesso.");
                             } else {
                                 JOptionPane.showMessageDialog(frame, "O tipo de seguro não corresponde ao tipo de cliente.", "Erro", JOptionPane.ERROR_MESSAGE);
@@ -312,6 +425,7 @@ public class Main {
                 JOptionPane.showMessageDialog(frame, "Por favor, selecione um seguro e insira o ID do cliente.", "Erro", JOptionPane.ERROR_MESSAGE);
             }
         });
+
      // Ouvinte para o botão de remoção de seguro
         btnRemover.addActionListener(e -> {
             String seguroSelecionado = list.getSelectedValue();  // Obtém o seguro selecionado na lista
@@ -333,6 +447,8 @@ public class Main {
                             // Verificar se o cliente possui esse seguro associado
                             if (app.verificarSeguroAssociado(idCliente, tipoSeguroSelecionado)) {
                                 // Chama o controlador para remover o seguro associado
+                            
+                            	app.alterarStatusApolice(idCliente,tipoSeguroSelecionado.getIdTipoSeguro(), "Inativo");
                                 app.removerSeguroDoCliente(idCliente, tipoSeguroSelecionado);
                                 JOptionPane.showMessageDialog(frame, "Seguro removido com sucesso.");
                             } else {
@@ -570,11 +686,11 @@ public class Main {
 		shutdownButton.setBorderPainted(false); // Remove a borda do botão
 		shutdownButton.setContentAreaFilled(false);
 
-		JButton btnHome = new JButton("");
-		btnHome.setToolTipText("Home");
-		btnHome.setIcon(new ImageIcon(Main.class.getResource("/resources/images/Homebotão.png")));
-		btnHome.setBounds(37, 164, 105, 100);
-		frame.getContentPane().add(btnHome);
+		JButton btnApolices = new JButton("");
+		btnApolices.setToolTipText("Apolices");
+		btnApolices.setIcon(new ImageIcon(Main.class.getResource("/resources/images/Homebotão.png")));
+		btnApolices.setBounds(37, 164, 105, 100);
+		frame.getContentPane().add(btnApolices);
 
 		JButton btnCadastro = new JButton("");
 		btnCadastro.setToolTipText("Cadastrar Cliente");
@@ -643,22 +759,11 @@ public class Main {
 		JButton cadastrarFisicoButton = new JButton("Cadastrar");
 		cadastrarFisicoButton.setBounds(748, 601, 103, 23);
 		painelCadastroFisico.add(cadastrarFisicoButton);
-		/*
-██╗░░░░░██╗░██████╗████████╗░█████╗░  ░█████╗░██╗░░░░░██╗███████╗███╗░░██╗████████╗███████╗░██████╗
-██║░░░░░██║██╔════╝╚══██╔══╝██╔══██╗  ██╔══██╗██║░░░░░██║██╔════╝████╗░██║╚══██╔══╝██╔════╝██╔════╝
-██║░░░░░██║╚█████╗░░░░██║░░░███████║  ██║░░╚═╝██║░░░░░██║█████╗░░██╔██╗██║░░░██║░░░█████╗░░╚█████╗░
-██║░░░░░██║░╚═══██╗░░░██║░░░██╔══██║  ██║░░██╗██║░░░░░██║██╔══╝░░██║╚████║░░░██║░░░██╔══╝░░░╚═══██╗
-███████╗██║██████╔╝░░░██║░░░██║░░██║  ╚█████╔╝███████╗██║███████╗██║░╚███║░░░██║░░░███████╗██████╔╝
-╚══════╝╚═╝╚═════╝░░░░╚═╝░░░╚═╝░░╚═╝  ░╚════╝░╚══════╝╚═╝╚══════╝╚═╝░░╚══╝░░░╚═╝░░░╚══════╝╚═════╝░	 
-		 */
-		// Criando o painel que vai conter a tabela de clientes
-		
-		
-		// Adicionar ação nos botões para mudar o painel de conteúdo
-		btnHome.addActionListener(new ActionListener() {
+
+		btnApolices.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				cardLayout.show(contentPanel, "Home");
+				cardLayout.show(contentPanel, "Apolices");
 			}
 		});
 
