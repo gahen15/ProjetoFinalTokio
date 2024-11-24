@@ -57,5 +57,6 @@ public class Empresa extends Cliente{
 	public String getTipoCliente() {
 		return  tipoCliente;
 	}
-
+public String getDocumento() {
+	return cnpj;}
 }

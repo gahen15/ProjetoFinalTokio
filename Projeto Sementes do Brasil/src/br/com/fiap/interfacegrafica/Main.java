@@ -257,13 +257,13 @@ public class Main {
 
         // Criando o painel de lista de clientes
         JPanel listaClientes = new JPanel();
-        listaClientes.setBounds(35, 81, 908, 594);
+        listaClientes.setBounds(35, 81, 970, 522);
         listaClientes.setLayout(null);
         listaClientes.setOpaque(false);
         relatoriosPanel.add(listaClientes);
 
         // Criando o modelo da tabela (colunas e dados)
-        String[] colunasClientes = { "ID", "Nome", "Endereço", "Telefone", "Documento" }; // Adicionando "Documento"
+        String[] colunasClientes = { "ID", "Nome", "Endereço", "Telefone", "Documento","Tipo Cliente", "Email" }; // Adicionando "Documento"
         List<Cliente> listaClientes1 = app.listarClientes(); // Obtém todos os clientes
 
         // Criando uma lista de dados para a tabela
@@ -272,20 +272,14 @@ public class Main {
         for (int i = 0; i < listaClientes1.size(); i++) {
             Cliente cliente = listaClientes1.get(i);
             dados[i][0] = cliente.getIdCliente();  // ID do cliente
-            dados[i][1] = cliente.getNome();       // Nome do cliente
-            dados[i][2] = cliente.getEndereco();   // Endereço do cliente
+           dados[i][1] = cliente.getNome();       // Nome do cliente
+           dados[i][2] = cliente.getEndereco();   // Endereço do cliente
             dados[i][3] = cliente.getTelefone();   // Telefone do cliente
+            dados[i][4] = cliente.getDocumento();   // Telefone do cliente
+           dados[i][5] = cliente.getTipoCliente();   // Telefone do cliente
+            dados[i][6] = cliente.getEmail();   // Telefone do cliente
 
-            // Condicional para verificar o tipo de cliente e obter o documento
-            if (cliente instanceof PessoaFisica) {
-                PessoaFisica pf = (PessoaFisica) cliente;
-                dados[i][4] = pf.getCpf(); // CPF da pessoa física
-            } else if (cliente instanceof Empresa) {
-                Empresa empresa = (Empresa) cliente;
-                dados[i][4] = empresa.getCnpj(); // CNPJ da empresa
-            } else {
-                dados[i][4] = "Documento desconhecido"; // Caso não seja nem PF nem Empresa
-            }
+      
         }
 
         // Criando o modelo da tabela
@@ -323,21 +317,21 @@ public class Main {
 
         // Adicionando a tabela dentro de um JScrollPane
         JScrollPane scrollPaneClientes = new JScrollPane(tableClientes);
-        scrollPaneClientes.setBounds(10, 49, 720, 521);
+        scrollPaneClientes.setBounds(20, 51, 961, 431);
         listaClientes.add(scrollPaneClientes);
 
         // Criando os componentes de pesquisa
         JTextField txtPesquisar = new JTextField();
         txtPesquisar.setToolTipText("Digite o id, CPF ou CNPJ do cliente");
-        txtPesquisar.setBounds(10, 10, 200, 30);
+        txtPesquisar.setBounds(20, 11, 200, 30);
         listaClientes.add(txtPesquisar);
 
         JButton btnPesquisar = new JButton("Pesquisar");
-        btnPesquisar.setBounds(220, 10, 120, 30);
+        btnPesquisar.setBounds(230, 11, 120, 30);
         listaClientes.add(btnPesquisar);
 
         JButton btnLimparBusca = new JButton("Limpar Busca");
-        btnLimparBusca.setBounds(350, 10, 120, 30);
+        btnLimparBusca.setBounds(360, 11, 120, 30);
         listaClientes.add(btnLimparBusca);
 
         // Ação do botão Pesquisar
@@ -363,7 +357,7 @@ public class Main {
 
         // Criando o botão Refresh
         JButton btnRefresh = new JButton("Refresh");
-        btnRefresh.setBounds(480, 10, 120, 30);
+        btnRefresh.setBounds(490, 11, 120, 30);
         listaClientes.add(btnRefresh);
 
      // Ação do botão Refresh
@@ -382,17 +376,10 @@ public class Main {
                 novosDados[i][1] = cliente.getNome();       // Nome do cliente
                 novosDados[i][2] = cliente.getEndereco();   // Endereço do cliente
                 novosDados[i][3] = cliente.getTelefone();   // Telefone do cliente
+                novosDados[i][4] = cliente.getDocumento();   // Telefone do cliente
+                novosDados[i][5] = cliente.getTipoCliente();   // Telefone do cliente
+                novosDados[i][6] = cliente.getEmail();   // Telefone do cliente
 
-                // Condicional para verificar o tipo de cliente e obter o documento correto
-                if (cliente instanceof PessoaFisica) {
-                    PessoaFisica pf = (PessoaFisica) cliente;
-                    novosDados[i][4] = pf.getCpf(); // CPF da pessoa física
-                } else if (cliente instanceof Empresa) {
-                    Empresa empresa = (Empresa) cliente;
-                    novosDados[i][4] = empresa.getCnpj(); // CNPJ da empresa
-                } else {
-                    novosDados[i][4] = "Documento desconhecido"; // Caso não seja nem PF nem Empresa
-                }
             }
 
             // Atualizando o modelo de dados com os novos dados
@@ -407,7 +394,7 @@ public class Main {
 
         // Criando o botão Deletar
         JButton btnDeletar = new JButton("Deletar");
-        btnDeletar.setBounds(610, 10, 120, 30);
+        btnDeletar.setBounds(620, 11, 120, 30);
         listaClientes.add(btnDeletar);
 
         // Ação do botão Deletar

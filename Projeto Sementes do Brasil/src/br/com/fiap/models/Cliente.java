@@ -116,7 +116,7 @@ public abstract class Cliente {
             this.apolices.remove(apolice);
         }
     }
-
+    public abstract String getDocumento();
     // Método abstrato para retornar o tipo de cliente
     public abstract String getTipoCliente();
 

@@ -33,6 +33,9 @@ public class PessoaFisica extends Cliente {
     public String getCpf() {
         return cpf;
     }
+    public String getDocumento() {
+    	return cpf;
+    }
 
     public void setCpf(String cpf) {
         this.cpf = cpf;
@@ -68,4 +71,5 @@ public class PessoaFisica extends Cliente {
     public void setDataNascimento(Date dataNascimento) {
         this.dataNascimento = dataNascimento;
     }
+    
 }
