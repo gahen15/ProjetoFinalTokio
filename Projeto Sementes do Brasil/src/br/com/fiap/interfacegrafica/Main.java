@@ -132,6 +132,7 @@ public class Main {
         String[] colunas = {"Nome do Cliente", "ID Apólice", "Descrição", "Valor", "Status","Data de Emissão"};
         DefaultTableModel modelApolicesTable = new DefaultTableModel(colunas, 0);
         JTable tableApolices = new JTable(modelApolicesTable);
+        tableApolices.setEnabled(false);
 
         // Configurando o JScrollPane para a tabela
         JScrollPane scrollPaneApolices = new JScrollPane(tableApolices);
@@ -254,6 +255,7 @@ public class Main {
 
         // Criando a JTable
         JTable tableClientes = new JTable(modelClientes);
+        tableClientes.setEnabled(false);
         tableClientes.getTableHeader().setResizingAllowed(true);
         tableClientes.getTableHeader().setReorderingAllowed(false); 
         // Criando o TableRowSorter para filtragem
@@ -476,6 +478,7 @@ public class Main {
         String[] colunas1 = { "ID Cliente", "Nome", "Email", "Tipo Cliente", "Seguros Associados" };
         DefaultTableModel tableModel = new DefaultTableModel(colunas1, 0);
         JTable tableCliente = new JTable(tableModel);
+        tableCliente.setEnabled(false);
         tableCliente.setBounds(557, 310, 400, 200);
         JScrollPane scrollPane_1 = new JScrollPane(tableCliente);
         scrollPane_1.setSize(888, 70);
