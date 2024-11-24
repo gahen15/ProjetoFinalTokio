@@ -251,17 +251,24 @@ public class Main {
         }
 
         // Criando o modelo da tabela
-        DefaultTableModel modelClientes = new DefaultTableModel(dados, colunasClientes);
+     // Criando o modelo de tabela não editável
+        DefaultTableModel modelClientes = new DefaultTableModel(dados, colunasClientes) {
+            @Override
+            public boolean isCellEditable(int row, int column) {
+                return false; // Impede a edição de todas as células
+            }
+        };
 
         // Criando a JTable
         JTable tableClientes = new JTable(modelClientes);
-        tableClientes.setEnabled(false);
+
+        // Configurando propriedades do cabeçalho
         tableClientes.getTableHeader().setResizingAllowed(true);
-        tableClientes.getTableHeader().setReorderingAllowed(false); 
+        tableClientes.getTableHeader().setReorderingAllowed(false);
+
         // Criando o TableRowSorter para filtragem
         TableRowSorter<DefaultTableModel> sorter = new TableRowSorter<>(modelClientes);
         tableClientes.setRowSorter(sorter);
-        tableClientes.setAutoResizeMode(JTable.AUTO_RESIZE_OFF);
 
         // Configurando a JTable
         tableClientes.setAutoResizeMode(JTable.AUTO_RESIZE_OFF);
