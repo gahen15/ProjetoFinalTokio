@@ -243,193 +243,201 @@ public class Main {
         lblSeguros.setBounds(434, 58, 232, 67);
         segurosPanel.add(lblSeguros);
 
+     // Criando o painel principal
         JPanel relatoriosPanel = new JPanel();
-        relatoriosPanel.setOpaque(false); // Garantir que o painel do conteúdo também seja transparente
+        relatoriosPanel.setOpaque(false); // Garantir que o painel do conteúdo seja transparente
         relatoriosPanel.setLayout(null);
+
+        // Criando o título
         JLabel lblDados = new JLabel("DADOS");
         lblDados.setBounds(440, 0, 175, 67);
-        lblDados.setForeground(new Color(255, 255, 255));
+        lblDados.setForeground(new Color(0, 0, 0));
         lblDados.setFont(new Font("Segoe UI", Font.BOLD, 50));
         relatoriosPanel.add(lblDados);
-     // Criando o painel de lista de clientes
-		JPanel listaClientes = new JPanel();
-		listaClientes.setBounds(35, 81, 908, 594);
-		listaClientes.setLayout(null);
-		listaClientes.setOpaque(false);
-		relatoriosPanel.add(listaClientes);
 
-		// Criando o modelo da tabela (nome das colunas e dados)
-		String[] colunasClientes = { "ID", "Nome", "Endereço", "Telefone", "Documento" }; // Adicionando "Documento" como coluna
-		List<Cliente> listaClientes1 = app.listarClientes(); // Obtém todos os clientes
+        // Criando o painel de lista de clientes
+        JPanel listaClientes = new JPanel();
+        listaClientes.setBounds(35, 81, 908, 594);
+        listaClientes.setLayout(null);
+        listaClientes.setOpaque(false);
+        relatoriosPanel.add(listaClientes);
 
-		// Criando uma lista de dados para a tabela
-		Object[][] dados = new Object[listaClientes1.size()][colunasClientes.length];
+        // Criando o modelo da tabela (colunas e dados)
+        String[] colunasClientes = { "ID", "Nome", "Endereço", "Telefone", "Documento" }; // Adicionando "Documento"
+        List<Cliente> listaClientes1 = app.listarClientes(); // Obtém todos os clientes
 
-		for (int i = 0; i < listaClientes1.size(); i++) {
-		    Cliente cliente = listaClientes1.get(i);
-		    dados[i][0] = cliente.getIdCliente();  // ID do cliente
-		    dados[i][1] = cliente.getNome();       // Nome do cliente
-		    dados[i][2] = cliente.getEndereco();   // Endereço do cliente
-		    dados[i][3] = cliente.getTelefone();   // Telefone do cliente
+        // Criando uma lista de dados para a tabela
+        Object[][] dados = new Object[listaClientes1.size()][colunasClientes.length];
 
-		    // Condicional para verificar o tipo de cliente e obter o documento correto
-		    if (cliente instanceof PessoaFisica) {
-		        PessoaFisica pf = (PessoaFisica) cliente;
-		        dados[i][4] = pf.getCpf(); // CPF da pessoa física
-		    } else if (cliente instanceof Empresa) {
-		        Empresa empresa = (Empresa) cliente;
-		        dados[i][4] = empresa.getCnpj(); // CNPJ da empresa
-		    } else {
-		        dados[i][4] = "Documento desconhecido"; // Caso não seja nem PF nem Empresa
-		    }
-		}
+        for (int i = 0; i < listaClientes1.size(); i++) {
+            Cliente cliente = listaClientes1.get(i);
+            dados[i][0] = cliente.getIdCliente();  // ID do cliente
+            dados[i][1] = cliente.getNome();       // Nome do cliente
+            dados[i][2] = cliente.getEndereco();   // Endereço do cliente
+            dados[i][3] = cliente.getTelefone();   // Telefone do cliente
 
-		// Criando o modelo da tabela com os dados e as colunas
-		DefaultTableModel modelClientes = new DefaultTableModel(dados, colunasClientes);
+            // Condicional para verificar o tipo de cliente e obter o documento
+            if (cliente instanceof PessoaFisica) {
+                PessoaFisica pf = (PessoaFisica) cliente;
+                dados[i][4] = pf.getCpf(); // CPF da pessoa física
+            } else if (cliente instanceof Empresa) {
+                Empresa empresa = (Empresa) cliente;
+                dados[i][4] = empresa.getCnpj(); // CNPJ da empresa
+            } else {
+                dados[i][4] = "Documento desconhecido"; // Caso não seja nem PF nem Empresa
+            }
+        }
 
-		// Criando a JTable com o modelo de dados
-		JTable tableClientes = new JTable(modelClientes);
+        // Criando o modelo da tabela
+        DefaultTableModel modelClientes = new DefaultTableModel(dados, colunasClientes);
 
-		// Criando o TableRowSorter
-		TableRowSorter<DefaultTableModel> sorter = new TableRowSorter<>(modelClientes);
-		tableClientes.setRowSorter(sorter);
+        // Criando a JTable
+        JTable tableClientes = new JTable(modelClientes);
+        tableClientes.getTableHeader().setResizingAllowed(true);
+        tableClientes.getTableHeader().setReorderingAllowed(false); 
+        // Criando o TableRowSorter para filtragem
+        TableRowSorter<DefaultTableModel> sorter = new TableRowSorter<>(modelClientes);
+        tableClientes.setRowSorter(sorter);
+        tableClientes.setAutoResizeMode(JTable.AUTO_RESIZE_OFF);
 
-		// Configurando a JTable
-		tableClientes.setAutoResizeMode(JTable.AUTO_RESIZE_OFF);
-		tableClientes.setFont(new Font("Arial", Font.PLAIN, 14));
-		tableClientes.setRowHeight(25);
-		tableClientes.setBorder(BorderFactory.createLineBorder(Color.BLACK));
-		tableClientes.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
-		tableClientes.setShowGrid(true);
-		tableClientes.setGridColor(Color.BLACK);
-		tableClientes.setOpaque(false);
+        // Configurando a JTable
+        tableClientes.setAutoResizeMode(JTable.AUTO_RESIZE_OFF);
+        tableClientes.setFont(new Font("Arial", Font.PLAIN, 14));
+        tableClientes.setRowHeight(25);
+        tableClientes.setBorder(BorderFactory.createLineBorder(Color.BLACK));
+        tableClientes.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+        tableClientes.setShowGrid(true);
+        tableClientes.setGridColor(Color.BLACK);
+        tableClientes.setOpaque(false);
 
-		// Ajustando o tamanho das colunas
-		for (int i = 0; i < tableClientes.getColumnCount(); i++) {
-		    int maxWidth = 0;
-		    for (int j = 0; j < tableClientes.getRowCount(); j++) {
-		        TableCellRenderer renderer = tableClientes.getCellRenderer(j, i);
-		        Component comp = tableClientes.prepareRenderer(renderer, j, i);
-		        maxWidth = Math.max(comp.getPreferredSize().width, maxWidth);
-		    }
-		    tableClientes.getColumnModel().getColumn(i).setPreferredWidth(maxWidth + 10);
-		}
+        // Ajustando o tamanho das colunas
+        for (int i = 0; i < tableClientes.getColumnCount(); i++) {
+            int maxWidth = 0;
+            for (int j = 0; j < tableClientes.getRowCount(); j++) {
+                TableCellRenderer renderer = tableClientes.getCellRenderer(j, i);
+                Component comp = tableClientes.prepareRenderer(renderer, j, i);
+                maxWidth = Math.max(comp.getPreferredSize().width, maxWidth);
+            }
+            tableClientes.getColumnModel().getColumn(i).setPreferredWidth(maxWidth + 10);
+        }
 
-		// Adicionando a tabela dentro de um JScrollPane
-		JScrollPane scrollPaneClientes = new JScrollPane(tableClientes);
-		scrollPaneClientes.setBounds(10, 49, 526, 521);
-		listaClientes.add(scrollPaneClientes);
+        // Adicionando a tabela dentro de um JScrollPane
+        JScrollPane scrollPaneClientes = new JScrollPane(tableClientes);
+        scrollPaneClientes.setBounds(10, 49, 526, 521);
+        listaClientes.add(scrollPaneClientes);
 
-		// Criando os componentes de pesquisa
-		JTextField txtPesquisar = new JTextField();
-		txtPesquisar.setBounds(10, 10, 200, 30);
-		listaClientes.add(txtPesquisar);
+        // Criando os componentes de pesquisa
+        JTextField txtPesquisar = new JTextField();
+        txtPesquisar.setBounds(10, 10, 200, 30);
+        listaClientes.add(txtPesquisar);
 
-		JButton btnPesquisar = new JButton("Pesquisar");
-		btnPesquisar.setBounds(220, 10, 120, 30);
-		listaClientes.add(btnPesquisar);
+        JButton btnPesquisar = new JButton("Pesquisar");
+        btnPesquisar.setBounds(220, 10, 120, 30);
+        listaClientes.add(btnPesquisar);
 
-		JButton btnLimparBusca = new JButton("Limpar Busca");
-		btnLimparBusca.setBounds(350, 10, 120, 30);
-		listaClientes.add(btnLimparBusca);
+        JButton btnLimparBusca = new JButton("Limpar Busca");
+        btnLimparBusca.setBounds(350, 10, 120, 30);
+        listaClientes.add(btnLimparBusca);
 
-		// Ação do botão Pesquisar
-		btnPesquisar.addActionListener(e2 -> {
-		    String termoPesquisa = txtPesquisar.getText().trim();
-		    if (!termoPesquisa.isEmpty()) {
-		        try {
-		            // Tentando filtrar por ID (primeira coluna)
-		            int id = Integer.parseInt(termoPesquisa);
-		            sorter.setRowFilter(RowFilter.numberFilter(RowFilter.ComparisonType.EQUAL, id, 0));
-		        } catch (NumberFormatException ex) {
-		            // Caso não seja um número, filtra por Documento (quarta coluna)
-		            sorter.setRowFilter(RowFilter.regexFilter(termoPesquisa, 4));
-		        }
-		    }
-		});
+        // Ação do botão Pesquisar
+        btnPesquisar.addActionListener(e2 -> {
+            String termoPesquisa = txtPesquisar.getText().trim();
+            if (!termoPesquisa.isEmpty()) {
+                try {
+                    // Tentando filtrar por ID (primeira coluna)
+                    int id = Integer.parseInt(termoPesquisa);
+                    sorter.setRowFilter(RowFilter.numberFilter(RowFilter.ComparisonType.EQUAL, id, 0));
+                } catch (NumberFormatException ex) {
+                    // Caso não seja um número, filtra por Documento (quarta coluna)
+                    sorter.setRowFilter(RowFilter.regexFilter(termoPesquisa, 4));
+                }
+            }
+        });
 
-		// Ação do botão Limpar Busca
-		btnLimparBusca.addActionListener(e2 -> {
-		    sorter.setRowFilter(null); // Remove o filtro e exibe todos os dados
-		    txtPesquisar.setText(""); // Limpa o campo de texto
-		});
+        // Ação do botão Limpar Busca
+        btnLimparBusca.addActionListener(e2 -> {
+            sorter.setRowFilter(null); // Remove o filtro e exibe todos os dados
+            txtPesquisar.setText(""); // Limpa o campo de texto
+        });
 
-		// Criando o botão Refresh
-		JButton btnRefresh = new JButton("Refresh");
-		btnRefresh.setBounds(480, 10, 120, 30);
-		listaClientes.add(btnRefresh);
+        // Criando o botão Refresh
+        JButton btnRefresh = new JButton("Refresh");
+        btnRefresh.setBounds(480, 10, 120, 30);
+        listaClientes.add(btnRefresh);
 
-		// Ação do botão Refresh
-		// Ação do botão Refresh
-		btnRefresh.addActionListener(e -> {
-		    // Remover a tabela antiga, se houver
-		    Component[] components = listaClientes.getComponents();
-		    for (Component component : components) {
-		        if (component instanceof JScrollPane) {
-		            listaClientes.remove(component);  // Remove o JScrollPane com a tabela antiga
-		        }
-		    }
+     // Ação do botão Refresh
+     // Ação do botão Refresh
+        btnRefresh.addActionListener(e -> {
+            // Obtendo os dados atualizados dos clientes
+            List<Cliente> listaClientes2 = app.listarClientes();
 
-		    // Atualizando os dados da tabela
-		    List<Cliente> listaClientes2 = app.listarClientes();  // Obtém a lista atualizada
-		    Object[][] dados2 = new Object[listaClientes2.size()][colunasClientes.length];
+            // Criando um novo array de dados para a tabela
+            Object[][] novosDados = new Object[listaClientes2.size()][colunasClientes.length];
 
-		    for (int i = 0; i < listaClientes2.size(); i++) {
-		        Cliente cliente = listaClientes2.get(i);
-		        dados2[i][0] = cliente.getIdCliente();  // ID do cliente
-		        dados2[i][1] = cliente.getNome();       // Nome do cliente
-		        dados2[i][2] = cliente.getEndereco();   // Endereço do cliente
-		        dados2[i][3] = cliente.getTelefone();   // Telefone do cliente
+            // Preenchendo o novo array com os dados atualizados
+            for (int i = 0; i < listaClientes2.size(); i++) {
+                Cliente cliente = listaClientes2.get(i);
+                novosDados[i][0] = cliente.getIdCliente();  // ID do cliente
+                novosDados[i][1] = cliente.getNome();       // Nome do cliente
+                novosDados[i][2] = cliente.getEndereco();   // Endereço do cliente
+                novosDados[i][3] = cliente.getTelefone();   // Telefone do cliente
 
-		        // Condicional para verificar o tipo de cliente e obter o documento correto
-		        if (cliente instanceof PessoaFisica) {
-		            PessoaFisica pf = (PessoaFisica) cliente;
-		            dados2[i][4] = pf.getCpf(); // CPF da pessoa física
-		        } else if (cliente instanceof Empresa) {
-		            Empresa empresa = (Empresa) cliente;
-		            dados2[i][4] = empresa.getCnpj(); // CNPJ da empresa
-		        } else {
-		            dados2[i][4] = "Documento desconhecido"; // Caso não seja nem PF nem Empresa
-		        }
-		    }
+                // Condicional para verificar o tipo de cliente e obter o documento correto
+                if (cliente instanceof PessoaFisica) {
+                    PessoaFisica pf = (PessoaFisica) cliente;
+                    novosDados[i][4] = pf.getCpf(); // CPF da pessoa física
+                } else if (cliente instanceof Empresa) {
+                    Empresa empresa = (Empresa) cliente;
+                    novosDados[i][4] = empresa.getCnpj(); // CNPJ da empresa
+                } else {
+                    novosDados[i][4] = "Documento desconhecido"; // Caso não seja nem PF nem Empresa
+                }
+            }
 
-		    // Criando o modelo da tabela com os dados atualizados
-		    DefaultTableModel modelClientes2 = new DefaultTableModel(dados2, colunasClientes);
-		    JTable tableClientes2 = new JTable(modelClientes2);
+            // Atualizando o modelo de dados com os novos dados
+            modelClientes.setDataVector(novosDados, colunasClientes);
 
-		    // Criando o TableRowSorter
-		    TableRowSorter<DefaultTableModel> sorter2 = new TableRowSorter<>(modelClientes2);
-		    tableClientes2.setRowSorter(sorter2);
+            // Atualizando a interface gráfica
+            modelClientes.fireTableDataChanged();  // Notifica a tabela para se atualizar
+            tableClientes.revalidate();
+            tableClientes.repaint();
+        });
 
-		    // Configurando a JTable
-		    tableClientes2.setAutoResizeMode(JTable.AUTO_RESIZE_OFF);
-		    tableClientes2.setFont(new Font("Arial", Font.PLAIN, 14));
-		    tableClientes2.setRowHeight(25);
-		    tableClientes2.setBorder(BorderFactory.createLineBorder(Color.BLACK));
-		    tableClientes2.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
-		    tableClientes2.setShowGrid(true);
-		    tableClientes2.setGridColor(Color.BLACK);
 
-		    // Ajustando o tamanho das colunas
-		    for (int i = 0; i < tableClientes2.getColumnCount(); i++) {
-		        int maxWidth = 0;
-		        for (int j = 0; j < tableClientes2.getRowCount(); j++) {
-		            TableCellRenderer renderer = tableClientes2.getCellRenderer(j, i);
-		            Component comp = tableClientes2.prepareRenderer(renderer, j, i);
-		            maxWidth = Math.max(comp.getPreferredSize().width, maxWidth);
-		        }
-		        tableClientes2.getColumnModel().getColumn(i).setPreferredWidth(maxWidth + 10);
-		    }
+        // Criando o botão Deletar
+        JButton btnDeletar = new JButton("Deletar");
+        btnDeletar.setBounds(610, 10, 120, 30);
+        listaClientes.add(btnDeletar);
 
-		    // Adicionando a nova tabela dentro de um JScrollPane
-		    JScrollPane scrollPaneClientes2 = new JScrollPane(tableClientes2);
-		    scrollPaneClientes2.setBounds(10, 49, 526, 521);
-		    listaClientes.add(scrollPaneClientes2);
+        // Ação do botão Deletar
+        btnDeletar.addActionListener(e -> {
+            int selectedRow = tableClientes.getSelectedRow();
 
-		    // Atualizando a interface
-		    listaClientes.revalidate();
-		    listaClientes.repaint();
-		});
+            // Verifica se uma linha foi selecionada
+            if (selectedRow != -1) {
+                // Obtém o ID do cliente selecionado na tabela (assumindo que o ID está na primeira coluna)
+                Long idCliente = (Long) tableClientes.getValueAt(selectedRow, 0);
+
+                // Confirmar a exclusão com o usuário
+                int confirm = JOptionPane.showConfirmDialog(null, 
+                    "Tem certeza que deseja excluir o cliente com ID " + idCliente + "?",
+                    "Confirmação de Exclusão", 
+                    JOptionPane.YES_NO_OPTION);
+
+                // Se o usuário confirmar a exclusão
+                if (confirm == JOptionPane.YES_OPTION) {
+                    // Chama o método para excluir o cliente
+                    app.deletarCliente(idCliente);  // Exemplo de método para deletar o cliente
+
+                    // Atualiza a tabela após exclusão
+                    modelClientes.removeRow(selectedRow);  // Remove a linha selecionada da tabela
+                    JOptionPane.showMessageDialog(null, "Cliente excluído com sucesso.");
+                }
+            } else {
+                JOptionPane.showMessageDialog(null, "Por favor, selecione um cliente para excluir.");
+            }
+        });
+
 
 
         // Adicionar os painéis de conteúdo ao painel principal
