@@ -251,6 +251,186 @@ public class Main {
         lblDados.setForeground(new Color(255, 255, 255));
         lblDados.setFont(new Font("Segoe UI", Font.BOLD, 50));
         relatoriosPanel.add(lblDados);
+     // Criando o painel de lista de clientes
+		JPanel listaClientes = new JPanel();
+		listaClientes.setBounds(35, 81, 908, 594);
+		listaClientes.setLayout(null);
+		listaClientes.setOpaque(false);
+		relatoriosPanel.add(listaClientes);
+
+		// Criando o modelo da tabela (nome das colunas e dados)
+		String[] colunasClientes = { "ID", "Nome", "Endereço", "Telefone", "Documento" }; // Adicionando "Documento" como coluna
+		List<Cliente> listaClientes1 = app.listarClientes(); // Obtém todos os clientes
+
+		// Criando uma lista de dados para a tabela
+		Object[][] dados = new Object[listaClientes1.size()][colunasClientes.length];
+
+		for (int i = 0; i < listaClientes1.size(); i++) {
+		    Cliente cliente = listaClientes1.get(i);
+		    dados[i][0] = cliente.getIdCliente();  // ID do cliente
+		    dados[i][1] = cliente.getNome();       // Nome do cliente
+		    dados[i][2] = cliente.getEndereco();   // Endereço do cliente
+		    dados[i][3] = cliente.getTelefone();   // Telefone do cliente
+
+		    // Condicional para verificar o tipo de cliente e obter o documento correto
+		    if (cliente instanceof PessoaFisica) {
+		        PessoaFisica pf = (PessoaFisica) cliente;
+		        dados[i][4] = pf.getCpf(); // CPF da pessoa física
+		    } else if (cliente instanceof Empresa) {
+		        Empresa empresa = (Empresa) cliente;
+		        dados[i][4] = empresa.getCnpj(); // CNPJ da empresa
+		    } else {
+		        dados[i][4] = "Documento desconhecido"; // Caso não seja nem PF nem Empresa
+		    }
+		}
+
+		// Criando o modelo da tabela com os dados e as colunas
+		DefaultTableModel modelClientes = new DefaultTableModel(dados, colunasClientes);
+
+		// Criando a JTable com o modelo de dados
+		JTable tableClientes = new JTable(modelClientes);
+
+		// Criando o TableRowSorter
+		TableRowSorter<DefaultTableModel> sorter = new TableRowSorter<>(modelClientes);
+		tableClientes.setRowSorter(sorter);
+
+		// Configurando a JTable
+		tableClientes.setAutoResizeMode(JTable.AUTO_RESIZE_OFF);
+		tableClientes.setFont(new Font("Arial", Font.PLAIN, 14));
+		tableClientes.setRowHeight(25);
+		tableClientes.setBorder(BorderFactory.createLineBorder(Color.BLACK));
+		tableClientes.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+		tableClientes.setShowGrid(true);
+		tableClientes.setGridColor(Color.BLACK);
+		tableClientes.setOpaque(false);
+
+		// Ajustando o tamanho das colunas
+		for (int i = 0; i < tableClientes.getColumnCount(); i++) {
+		    int maxWidth = 0;
+		    for (int j = 0; j < tableClientes.getRowCount(); j++) {
+		        TableCellRenderer renderer = tableClientes.getCellRenderer(j, i);
+		        Component comp = tableClientes.prepareRenderer(renderer, j, i);
+		        maxWidth = Math.max(comp.getPreferredSize().width, maxWidth);
+		    }
+		    tableClientes.getColumnModel().getColumn(i).setPreferredWidth(maxWidth + 10);
+		}
+
+		// Adicionando a tabela dentro de um JScrollPane
+		JScrollPane scrollPaneClientes = new JScrollPane(tableClientes);
+		scrollPaneClientes.setBounds(10, 49, 526, 521);
+		listaClientes.add(scrollPaneClientes);
+
+		// Criando os componentes de pesquisa
+		JTextField txtPesquisar = new JTextField();
+		txtPesquisar.setBounds(10, 10, 200, 30);
+		listaClientes.add(txtPesquisar);
+
+		JButton btnPesquisar = new JButton("Pesquisar");
+		btnPesquisar.setBounds(220, 10, 120, 30);
+		listaClientes.add(btnPesquisar);
+
+		JButton btnLimparBusca = new JButton("Limpar Busca");
+		btnLimparBusca.setBounds(350, 10, 120, 30);
+		listaClientes.add(btnLimparBusca);
+
+		// Ação do botão Pesquisar
+		btnPesquisar.addActionListener(e2 -> {
+		    String termoPesquisa = txtPesquisar.getText().trim();
+		    if (!termoPesquisa.isEmpty()) {
+		        try {
+		            // Tentando filtrar por ID (primeira coluna)
+		            int id = Integer.parseInt(termoPesquisa);
+		            sorter.setRowFilter(RowFilter.numberFilter(RowFilter.ComparisonType.EQUAL, id, 0));
+		        } catch (NumberFormatException ex) {
+		            // Caso não seja um número, filtra por Documento (quarta coluna)
+		            sorter.setRowFilter(RowFilter.regexFilter(termoPesquisa, 4));
+		        }
+		    }
+		});
+
+		// Ação do botão Limpar Busca
+		btnLimparBusca.addActionListener(e2 -> {
+		    sorter.setRowFilter(null); // Remove o filtro e exibe todos os dados
+		    txtPesquisar.setText(""); // Limpa o campo de texto
+		});
+
+		// Criando o botão Refresh
+		JButton btnRefresh = new JButton("Refresh");
+		btnRefresh.setBounds(480, 10, 120, 30);
+		listaClientes.add(btnRefresh);
+
+		// Ação do botão Refresh
+		// Ação do botão Refresh
+		btnRefresh.addActionListener(e -> {
+		    // Remover a tabela antiga, se houver
+		    Component[] components = listaClientes.getComponents();
+		    for (Component component : components) {
+		        if (component instanceof JScrollPane) {
+		            listaClientes.remove(component);  // Remove o JScrollPane com a tabela antiga
+		        }
+		    }
+
+		    // Atualizando os dados da tabela
+		    List<Cliente> listaClientes2 = app.listarClientes();  // Obtém a lista atualizada
+		    Object[][] dados2 = new Object[listaClientes2.size()][colunasClientes.length];
+
+		    for (int i = 0; i < listaClientes2.size(); i++) {
+		        Cliente cliente = listaClientes2.get(i);
+		        dados2[i][0] = cliente.getIdCliente();  // ID do cliente
+		        dados2[i][1] = cliente.getNome();       // Nome do cliente
+		        dados2[i][2] = cliente.getEndereco();   // Endereço do cliente
+		        dados2[i][3] = cliente.getTelefone();   // Telefone do cliente
+
+		        // Condicional para verificar o tipo de cliente e obter o documento correto
+		        if (cliente instanceof PessoaFisica) {
+		            PessoaFisica pf = (PessoaFisica) cliente;
+		            dados2[i][4] = pf.getCpf(); // CPF da pessoa física
+		        } else if (cliente instanceof Empresa) {
+		            Empresa empresa = (Empresa) cliente;
+		            dados2[i][4] = empresa.getCnpj(); // CNPJ da empresa
+		        } else {
+		            dados2[i][4] = "Documento desconhecido"; // Caso não seja nem PF nem Empresa
+		        }
+		    }
+
+		    // Criando o modelo da tabela com os dados atualizados
+		    DefaultTableModel modelClientes2 = new DefaultTableModel(dados2, colunasClientes);
+		    JTable tableClientes2 = new JTable(modelClientes2);
+
+		    // Criando o TableRowSorter
+		    TableRowSorter<DefaultTableModel> sorter2 = new TableRowSorter<>(modelClientes2);
+		    tableClientes2.setRowSorter(sorter2);
+
+		    // Configurando a JTable
+		    tableClientes2.setAutoResizeMode(JTable.AUTO_RESIZE_OFF);
+		    tableClientes2.setFont(new Font("Arial", Font.PLAIN, 14));
+		    tableClientes2.setRowHeight(25);
+		    tableClientes2.setBorder(BorderFactory.createLineBorder(Color.BLACK));
+		    tableClientes2.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+		    tableClientes2.setShowGrid(true);
+		    tableClientes2.setGridColor(Color.BLACK);
+
+		    // Ajustando o tamanho das colunas
+		    for (int i = 0; i < tableClientes2.getColumnCount(); i++) {
+		        int maxWidth = 0;
+		        for (int j = 0; j < tableClientes2.getRowCount(); j++) {
+		            TableCellRenderer renderer = tableClientes2.getCellRenderer(j, i);
+		            Component comp = tableClientes2.prepareRenderer(renderer, j, i);
+		            maxWidth = Math.max(comp.getPreferredSize().width, maxWidth);
+		        }
+		        tableClientes2.getColumnModel().getColumn(i).setPreferredWidth(maxWidth + 10);
+		    }
+
+		    // Adicionando a nova tabela dentro de um JScrollPane
+		    JScrollPane scrollPaneClientes2 = new JScrollPane(tableClientes2);
+		    scrollPaneClientes2.setBounds(10, 49, 526, 521);
+		    listaClientes.add(scrollPaneClientes2);
+
+		    // Atualizando a interface
+		    listaClientes.revalidate();
+		    listaClientes.repaint();
+		});
+
 
         // Adicionar os painéis de conteúdo ao painel principal
 
@@ -304,9 +484,9 @@ public class Main {
         listaSeguros.add(idClienteField);
 
         // Criando botão de pesquisa para buscar o cliente
-        JButton btnPesquisar = new JButton("Pesquisar Cliente");
-        btnPesquisar.setBounds(648, 247, 250, 40);
-        listaSeguros.add(btnPesquisar);
+        JButton btnPesquisar2 = new JButton("Pesquisar Cliente");
+        btnPesquisar2.setBounds(648, 247, 250, 40);
+        listaSeguros.add(btnPesquisar2);
 
         // Criando botão para associar o seguro ao cliente
         JButton btnAssociar = new JButton("Associar Seguro");
@@ -336,7 +516,7 @@ public class Main {
         tableCliente.getColumnModel().getColumn(3).setPreferredWidth(120); // Tipo Cliente
         tableCliente.getColumnModel().getColumn(4).setPreferredWidth(600); // Seguros Associados (aumentada)
         // Ouvinte para o botão de pesquisa para buscar o cliente e exibir seus dados
-        btnPesquisar.addActionListener(e -> {
+        btnPesquisar2.addActionListener(e -> {
             String idClienteText = idClienteField.getText();
             if (!idClienteText.isEmpty()) {
                 try {
@@ -786,110 +966,7 @@ public class Main {
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				cardLayout.show(contentPanel, "Relatórios");
-				// Criando o painel de lista de clientes
-				JPanel listaClientes = new JPanel();
-				listaClientes.setBounds(35, 81, 908, 594);
-				listaClientes.setLayout(null);
-				listaClientes.setOpaque(false);
-				relatoriosPanel.add(listaClientes);
-
-				// Criando o modelo da tabela (nome das colunas e dados)
-				String[] colunasClientes = { "ID", "Nome", "Endereço", "Telefone", "Documento" }; // Adicionando "Documento" como coluna
-				List<Cliente> listaClientes1 = app.listarClientes(); // Obtém todos os clientes
-
-				// Criando uma lista de dados para a tabela
-				Object[][] dados = new Object[listaClientes1.size()][colunasClientes.length];
-
-				for (int i = 0; i < listaClientes1.size(); i++) {
-				    Cliente cliente = listaClientes1.get(i);
-				    dados[i][0] = cliente.getIdCliente();  // ID do cliente
-				    dados[i][1] = cliente.getNome();       // Nome do cliente
-				    dados[i][2] = cliente.getEndereco();   // Endereço do cliente
-				    dados[i][3] = cliente.getTelefone();   // Telefone do cliente
-
-				    // Condicional para verificar o tipo de cliente e obter o documento correto
-				    if (cliente instanceof PessoaFisica) {
-				        PessoaFisica pf = (PessoaFisica) cliente;
-				        dados[i][4] = pf.getCpf(); // CPF da pessoa física
-				    } else if (cliente instanceof Empresa) {
-				        Empresa empresa = (Empresa) cliente;
-				        dados[i][4] = empresa.getCnpj(); // CNPJ da empresa
-				    } else {
-				        dados[i][4] = "Documento desconhecido"; // Caso não seja nem PF nem Empresa
-				    }
 				}
-
-				// Criando o modelo da tabela com os dados e as colunas
-				DefaultTableModel modelClientes = new DefaultTableModel(dados, colunasClientes);
-
-				// Criando a JTable com o modelo de dados
-				JTable tableClientes = new JTable(modelClientes);
-
-				// Criando o TableRowSorter
-				TableRowSorter<DefaultTableModel> sorter = new TableRowSorter<>(modelClientes);
-				tableClientes.setRowSorter(sorter);
-
-				// Configurando a JTable
-				tableClientes.setAutoResizeMode(JTable.AUTO_RESIZE_OFF);
-				tableClientes.setFont(new Font("Arial", Font.PLAIN, 14));
-				tableClientes.setRowHeight(25);
-				tableClientes.setBorder(BorderFactory.createLineBorder(Color.BLACK));
-				tableClientes.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
-				tableClientes.setShowGrid(true);
-				tableClientes.setGridColor(Color.BLACK);
-				tableClientes.setOpaque(false);
-
-				// Ajustando o tamanho das colunas
-				for (int i = 0; i < tableClientes.getColumnCount(); i++) {
-				    int maxWidth = 0;
-				    for (int j = 0; j < tableClientes.getRowCount(); j++) {
-				        TableCellRenderer renderer = tableClientes.getCellRenderer(j, i);
-				        Component comp = tableClientes.prepareRenderer(renderer, j, i);
-				        maxWidth = Math.max(comp.getPreferredSize().width, maxWidth);
-				    }
-				    tableClientes.getColumnModel().getColumn(i).setPreferredWidth(maxWidth + 10);
-				}
-
-				// Adicionando a tabela dentro de um JScrollPane
-				JScrollPane scrollPaneClientes = new JScrollPane(tableClientes);
-				scrollPaneClientes.setBounds(10, 49, 526, 521);
-				listaClientes.add(scrollPaneClientes);
-
-				// Criando os componentes de pesquisa
-				JTextField txtPesquisar = new JTextField();
-				txtPesquisar.setBounds(10, 10, 200, 30);
-				listaClientes.add(txtPesquisar);
-
-				JButton btnPesquisar = new JButton("Pesquisar");
-				btnPesquisar.setBounds(220, 10, 120, 30);
-				listaClientes.add(btnPesquisar);
-
-				JButton btnLimparBusca = new JButton("Limpar Busca");
-				btnLimparBusca.setBounds(350, 10, 120, 30);
-				listaClientes.add(btnLimparBusca);
-
-				// Ação do botão Pesquisar
-				btnPesquisar.addActionListener(e2 -> {
-				    String termoPesquisa = txtPesquisar.getText().trim();
-				    if (!termoPesquisa.isEmpty()) {
-				        try {
-				            // Tentando filtrar por ID (primeira coluna)
-				            int id = Integer.parseInt(termoPesquisa);
-				            sorter.setRowFilter(RowFilter.numberFilter(RowFilter.ComparisonType.EQUAL, id, 0));
-				        } catch (NumberFormatException ex) {
-				            // Caso não seja um número, filtra por Documento (quarta coluna)
-				            sorter.setRowFilter(RowFilter.regexFilter(termoPesquisa, 4));
-				        }
-				    }
-				});
-
-				// Ação do botão Limpar Busca
-				btnLimparBusca.addActionListener(e2 -> {
-				    sorter.setRowFilter(null); // Remove o filtro e exibe todos os dados
-				    txtPesquisar.setText(""); // Limpa o campo de texto
-				});
-
-			}
 		});
 
 		botaoJuridica.addActionListener(new ActionListener() {
