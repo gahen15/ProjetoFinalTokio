@@ -254,4 +254,110 @@ public class AppController {
 		return seguroDAO.listarTodosSeguros();
 	}
 
+	public Apolice buscarApolicePorId(long idApolice) {
+	    String sql = "SELECT * FROM Apolices WHERE id = ?";
+	    Apolice apolice = null;
+
+	    try (PreparedStatement preparedStatement = connection.prepareStatement(sql)) {
+
+	        preparedStatement.setLong(1, idApolice);
+
+	        try (ResultSet resultSet = preparedStatement.executeQuery()) {
+	            if (resultSet.next()) {
+	                apolice = new Apolice();
+	                apolice.setId(resultSet.getLong("id"));
+
+	                // Buscando o cliente associado
+	                long idCliente = resultSet.getLong("id_cliente");
+	                Cliente cliente = buscarClientePorId(idCliente); // Método que busca o cliente
+	                apolice.setCliente(cliente);
+
+	                // Buscando o tipo de seguro associado
+	                int tipoSeguroId = resultSet.getInt("id_tipo_seguro");
+	                TipoSeguro tipoSeguro = buscarTipoSeguroId(tipoSeguroId); // Método que busca o tipo de seguro
+	                apolice.setTipoSeguro(tipoSeguro);
+
+	                apolice.setDataEmissao(resultSet.getDate("data_emissao"));
+	                apolice.setValor(resultSet.getDouble("valor"));
+	                apolice.setStatus(resultSet.getString("status"));
+	            }
+	        }
+	    } catch (SQLException e) {
+	        e.printStackTrace();
+	        // Use um logger ou trate a exceção de forma adequada
+	    }
+
+	    return apolice;
+	}
+
+	public List<Apolice> listarApolicesDoCliente(long idCliente) {
+	    List<Apolice> apolices = new ArrayList<>();
+	    String sql = """
+	        SELECT a.id, a.idTipoSeguro, a.dataEmissao, a.valor, a.status,
+       c.idCliente, c.tipoCliente, c.nome, c.endereco,
+       ts.descricao AS descricaoSeguro,
+       pf.cpf, pf.estadoCivil, pf.profissao, pf.dataNascimento, -- Dados Pessoa Física
+       e.cnpj, e.nomeFantasia, e.razaoSocial -- Dados Empresa
+FROM T_Apolice a
+JOIN ClienteApolice ca ON a.id = ca.idApolice
+JOIN T_Cliente c ON ca.idCliente = c.idCliente
+JOIN TipoSeguro ts ON a.idTipoSeguro = ts.idTipoSeguro
+LEFT JOIN T_PessoaFisica pf ON c.idCliente = pf.idCliente -- Join com T_PessoaFisica
+LEFT JOIN T_Empresa e ON c.idCliente = e.idCliente -- Join com T_Empresa
+WHERE ca.idCliente = ?
+
+	    """;
+
+	    try (PreparedStatement stmt = connection.prepareStatement(sql)) {
+	        stmt.setLong(1, idCliente);
+
+	        try (ResultSet rs = stmt.executeQuery()) {
+	            while (rs.next()) {
+	                // Instanciar a apólice
+	                Apolice apolice = new Apolice();
+	                apolice.setId(rs.getLong("id"));
+
+	                // Configurar o cliente associado
+	                String tipoCliente = rs.getString("tipoCliente");
+	                Cliente cliente;
+	                if ("FISICA".equalsIgnoreCase(tipoCliente)) {
+	                    cliente = new PessoaFisica();
+	                    ((PessoaFisica) cliente).setCpf(rs.getString("cpf"));
+	                } else if ("JURIDICA".equalsIgnoreCase(tipoCliente)) {
+	                    cliente = new Empresa();
+	                    ((Empresa) cliente).setCnpj(rs.getString("cnpj"));
+	                } else {
+	                    throw new SQLException("Tipo de cliente desconhecido: " + tipoCliente);
+	                }
+	                cliente.setIdCliente(rs.getLong("idCliente"));
+	                cliente.setNome(rs.getString("nome"));
+	                cliente.setEndereco(rs.getString("endereco"));
+	                apolice.setCliente(cliente);
+
+	                // Configurar o tipo de seguro
+	                TipoSeguro tipoSeguro = new TipoSeguro();
+	                tipoSeguro.setIdTipoSeguro(rs.getLong("idTipoSeguro"));
+	                tipoSeguro.setDescricao(rs.getString("descricaoSeguro"));
+	                apolice.setTipoSeguro(tipoSeguro);
+
+	                apolice.setDataEmissao(rs.getDate("dataEmissao"));
+	                apolice.setValor(rs.getDouble("valor"));
+	                apolice.setStatus(rs.getString("status"));
+
+	                apolices.add(apolice);
+	            }
+	        }
+	    } catch (SQLException e) {
+	        e.printStackTrace();
+	    }
+
+	    return apolices;
+	}
+
+
+	
+
+
+
+
 }
