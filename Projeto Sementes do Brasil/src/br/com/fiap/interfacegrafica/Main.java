@@ -140,11 +140,13 @@ public class Main {
 
         // Campo de texto para ID do cliente
         JTextField idClienteFieldApolice = new JTextField();
+        idClienteFieldApolice.setToolTipText("Digite o id do Cliente");
         idClienteFieldApolice.setBounds(637, 24, 250, 40);
         listaApolices.add(idClienteFieldApolice);
 
         // Botão para pesquisar cliente
         JButton btnPesquisarApolice = new JButton("Pesquisar Cliente");
+        btnPesquisarApolice.setToolTipText("Buscar apólice por idCliente");
         btnPesquisarApolice.setBounds(637, 75, 250, 40);
         listaApolices.add(btnPesquisarApolice);
 
@@ -292,10 +294,12 @@ public class Main {
         listaClientes.add(txtPesquisar);
 
         JButton btnPesquisar = new JButton("Pesquisar");
+        btnPesquisar.setToolTipText("Buscar Cliente por id, CPF ou CNPJ");
         btnPesquisar.setBounds(230, 11, 120, 30);
         listaClientes.add(btnPesquisar);
 
         JButton btnLimparBusca = new JButton("Limpar Busca");
+        btnLimparBusca.setToolTipText("Limpar Busca");
         btnLimparBusca.setBounds(360, 11, 120, 30);
         listaClientes.add(btnLimparBusca);
 
@@ -322,6 +326,7 @@ public class Main {
 
         // Criando o botão Refresh
         JButton btnRefresh = new JButton("Refresh");
+        btnRefresh.setToolTipText("Atualizar");
         btnRefresh.setBounds(490, 11, 120, 30);
         listaClientes.add(btnRefresh);
 
@@ -359,6 +364,7 @@ public class Main {
 
         // Criando o botão Deletar
         JButton btnDeletar = new JButton("Deletar");
+        btnDeletar.setToolTipText("Apagar Cliente");
         btnDeletar.setBounds(620, 11, 120, 30);
         listaClientes.add(btnDeletar);
 
@@ -442,22 +448,26 @@ public class Main {
 
         // Criando campo de texto para inserir ID do Cliente
         JTextField idClienteField = new JTextField();
+        idClienteField.setToolTipText("Digite o id do Cliente");
         idClienteField.setBounds(648, 197, 250, 40);
         listaSeguros.add(idClienteField);
 
         // Criando botão de pesquisa para buscar o cliente
         JButton btnPesquisar2 = new JButton("Pesquisar Cliente");
+        btnPesquisar2.setToolTipText("Pesquisar Cliente por id");
         btnPesquisar2.setBounds(648, 247, 250, 40);
         listaSeguros.add(btnPesquisar2);
 
         // Criando botão para associar o seguro ao cliente
         JButton btnAssociar = new JButton("Associar Seguro");
+        btnAssociar.setToolTipText("Asassociar Seguro ao Cliente");
         btnAssociar.setBounds(648, 297, 250, 40);
         btnAssociar.setEnabled(false); // Inicialmente, desabilitado
         listaSeguros.add(btnAssociar);
 
         // Criando botão para remover o seguro
         JButton btnRemover = new JButton("Remover Seguro");
+        btnRemover.setToolTipText("Desassociar Seguro ao Cliente");
         btnRemover.setBounds(648, 347, 250, 40);
         btnRemover.setEnabled(false); // Inicialmente, desabilitado
         listaSeguros.add(btnRemover);
@@ -661,6 +671,7 @@ public class Main {
 		nomeLabel_1.setFont(new Font("Segoe UI", Font.BOLD, 28));
 
 		nomeFieldJuridica = new JTextField();
+		nomeFieldJuridica.setToolTipText("Nome do representante");
 		nomeFieldJuridica.setBounds(10, 51, 841, 30);
 		painelCadastroJuridico.add(nomeFieldJuridica);
 		nomeFieldJuridica.setFont(new Font("Tahoma", Font.PLAIN, 12));
@@ -727,6 +738,7 @@ public class Main {
 		razaoSocialFieldJuridica.setColumns(10);
 
 		JButton cadastrarJuridicoButton = new JButton("Cadastrar");
+		cadastrarJuridicoButton.setToolTipText("Cadastrar Cliente Jurídico");
 		cadastrarJuridicoButton.setBounds(748, 560, 103, 23);
 		painelCadastroJuridico.add(cadastrarJuridicoButton);
 		scrollCadastroJuridica.setBounds(50, 101, 910, 537);
@@ -767,6 +779,7 @@ public class Main {
 		painelCadastroFisico.add(enderecoField);
 
 		cpfField = new JTextField();
+		cpfField.setToolTipText("Não utilize pontos ou traços");
 		cpfField.setColumns(10);
 		cpfField.setBounds(10, 200, 841, 30);
 		painelCadastroFisico.add(cpfField);
@@ -797,6 +810,7 @@ public class Main {
 		painelCadastroFisico.add(uniaoButton);
 
 		dataField = new JTextField();
+		dataField.setToolTipText("Utilize o formato dd/MM/YYYY");
 		dataField.setColumns(10);
 		dataField.setBounds(10, 125, 841, 30);
 		painelCadastroFisico.add(dataField);
@@ -841,11 +855,13 @@ public class Main {
 		frame.getContentPane().add(btnCadastro);
 
 		JButton botaoJuridica = new JButton("");
+		botaoJuridica.setToolTipText("Cadastrar Cliente Jurídico");
 		botaoJuridica.setIcon(new ImageIcon(Main.class.getResource("/resources/images/botãoJurídica.png")));
 		botaoJuridica.setBounds(171, 164, 312, 415);
 		cadastroPanel.add(botaoJuridica);
 
 		JButton botaoFisica = new JButton("");
+		botaoFisica.setToolTipText("Cadastrar Cliente Físico");
 		botaoFisica.setIcon(new ImageIcon(Main.class.getResource("/resources/images/botãoFísica.png")));
 		botaoFisica.setBounds(583, 164, 312, 415);
 		cadastroPanel.add(botaoFisica);
@@ -899,6 +915,7 @@ public class Main {
 		painelCadastroFisico.add(lblEstadoCivil);
 
 		JButton cadastrarFisicoButton = new JButton("Cadastrar");
+		cadastrarFisicoButton.setToolTipText("Cadastrar Cliente Físico");
 		cadastrarFisicoButton.setBounds(748, 601, 103, 23);
 		painelCadastroFisico.add(cadastrarFisicoButton);
 

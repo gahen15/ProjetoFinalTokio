@@ -1,16 +1,47 @@
--- Remover os triggers
+-- Remover os triggers (gatilhos)
+-- O comando abaixo remove o trigger "trg_cliente" da base de dados.
+-- Esse trigger pode estar relacionado a ações automáticas ou validações antes de operações na tabela Cliente.
 DROP TRIGGER trg_cliente;
+
+-- O comando abaixo remove o trigger "trg_apolice_id" da base de dados.
+-- Esse trigger pode estar associado a ações de manipulação ou geração de IDs para apólices.
 DROP TRIGGER trg_apolice_id;
 
--- Remover as tabelas em ordem correta (dependências de chave estrangeira)
+-- Remover as tabelas em ordem correta (levando em conta dependências de chave estrangeira)
+-- As tabelas devem ser removidas na ordem em que não existem mais dependências de chave estrangeira, 
+-- garantindo que não ocorram erros de violação de restrições.
+
+-- Removendo a tabela ClienteApolice que contém a relação entre clientes e apólices, 
+-- com a remoção das restrições de chave estrangeira.
 DROP TABLE ClienteApolice CASCADE CONSTRAINTS;
+
+-- Removendo a tabela T_Apolice que armazena dados relacionados a apólices de seguro,
+-- com a remoção das restrições de chave estrangeira.
 DROP TABLE T_Apolice CASCADE CONSTRAINTS;
+
+-- Removendo a tabela T_Empresa, que pode conter informações sobre empresas associadas aos clientes,
+-- com a remoção das restrições de chave estrangeira.
 DROP TABLE T_Empresa CASCADE CONSTRAINTS;
+
+-- Removendo a tabela T_PessoaFisica, que armazena informações sobre pessoas físicas associadas aos clientes,
+-- com a remoção das restrições de chave estrangeira.
 DROP TABLE T_PessoaFisica CASCADE CONSTRAINTS;
+
+-- Removendo a tabela ClienteSeguro, que faz a associação entre clientes e seguros, 
+-- com a remoção das restrições de chave estrangeira.
 DROP TABLE ClienteSeguro CASCADE CONSTRAINTS;
+
+-- Removendo a tabela TipoSeguro que contém os tipos de seguro disponíveis no sistema,
+-- com a remoção das restrições de chave estrangeira.
 DROP TABLE TipoSeguro CASCADE CONSTRAINTS;
+
+-- Removendo a tabela T_Cliente, que contém informações gerais sobre os clientes, 
+-- com a remoção das restrições de chave estrangeira.
 DROP TABLE T_Cliente CASCADE CONSTRAINTS;
 
--- Remover as sequências
+-- Remover as sequências (geradores de números automáticos para identificação de registros)
+-- O comando abaixo remove a sequência "seq_apolice", que pode ser usada para gerar IDs únicos para apólices.
 DROP SEQUENCE seq_apolice;
+
+-- O comando abaixo remove a sequência "seq_cliente", que pode ser usada para gerar IDs únicos para clientes.
 DROP SEQUENCE seq_cliente;

@@ -9,7 +9,7 @@ CREATE TABLE T_Cliente (
     idCliente NUMBER PRIMARY KEY,
     nome VARCHAR2(255) NOT NULL,
     email VARCHAR2(255) NOT NULL,
-    telefone VARCHAR2(15),
+    telefone VARCHAR2(20),
     endereco VARCHAR2(255),
     tipoCliente VARCHAR2(10) NOT NULL, -- FISICA ou JURIDICA
     dataCadastro DATE NOT NULL
