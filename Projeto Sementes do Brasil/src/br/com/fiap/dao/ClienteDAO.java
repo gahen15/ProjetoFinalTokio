@@ -186,36 +186,51 @@ public class ClienteDAO {
 
 */
 	public void deletarCliente(long id) {
-		String deletePessoaFisicaSql = "DELETE FROM T_PessoaFisica WHERE idCliente = ?";
-		String deleteEmpresaSql = "DELETE FROM T_Empresa WHERE idCliente = ?";
-		String deleteClienteSql = "DELETE FROM T_Cliente WHERE idCliente = ?";
+	    String deleteApolicesSql = "DELETE FROM ClienteApolice WHERE idCliente = ?";
+	    String deleteApoliceSql = "DELETE FROM T_Apolice WHERE idCliente = ?";
+	    String deletePessoaFisicaSql = "DELETE FROM T_PessoaFisica WHERE idCliente = ?";
+	    String deleteEmpresaSql = "DELETE FROM T_Empresa WHERE idCliente = ?";
+	    String deleteClienteSql = "DELETE FROM T_Cliente WHERE idCliente = ?";
 
-		try {
-			// Excluir Pessoa Física, se existir
-			try (PreparedStatement pfStmt = connection.prepareStatement(deletePessoaFisicaSql)) {
-				pfStmt.setLong(1, id);
-				pfStmt.executeUpdate();
-			}
+	    try {
+	        // Excluir apólices associadas ao cliente na tabela ClienteApolice
+	        try (PreparedStatement apolicesStmt = connection.prepareStatement(deleteApolicesSql)) {
+	            apolicesStmt.setLong(1, id);
+	            apolicesStmt.executeUpdate();
+	        }
 
-			// Excluir Empresa, se existir
-			try (PreparedStatement empStmt = connection.prepareStatement(deleteEmpresaSql)) {
-				empStmt.setLong(1, id);
-				empStmt.executeUpdate();
-			}
+	        // Excluir apólices na tabela T_Apolice, se existirem
+	        try (PreparedStatement apoliceStmt = connection.prepareStatement(deleteApoliceSql)) {
+	            apoliceStmt.setLong(1, id);
+	            apoliceStmt.executeUpdate();
+	        }
 
-			// Excluir o Cliente
-			try (PreparedStatement clienteStmt = connection.prepareStatement(deleteClienteSql)) {
-				clienteStmt.setLong(1, id);
-				int affectedRows = clienteStmt.executeUpdate();
+	        // Excluir registros de Pessoa Física, se existir
+	        try (PreparedStatement pfStmt = connection.prepareStatement(deletePessoaFisicaSql)) {
+	            pfStmt.setLong(1, id);
+	            pfStmt.executeUpdate();
+	        }
 
-				if (affectedRows == 0) {
-					throw new RuntimeException("Nenhum cliente encontrado com o ID: " + id);
-				}
-			}
-		} catch (SQLException e) {
-			throw new RuntimeException("Erro ao deletar cliente", e);
-		}
+	        // Excluir registros de Empresa, se existir
+	        try (PreparedStatement empStmt = connection.prepareStatement(deleteEmpresaSql)) {
+	            empStmt.setLong(1, id);
+	            empStmt.executeUpdate();
+	        }
+
+	        // Excluir o Cliente de T_Cliente
+	        try (PreparedStatement clienteStmt = connection.prepareStatement(deleteClienteSql)) {
+	            clienteStmt.setLong(1, id);
+	            int affectedRows = clienteStmt.executeUpdate();
+
+	            if (affectedRows == 0) {
+	                throw new RuntimeException("Nenhum cliente encontrado com o ID: " + id);
+	            }
+	        }
+	    } catch (SQLException e) {
+	        throw new RuntimeException("Erro ao deletar cliente", e);
+	    }
 	}
+
 
 	public List<Cliente> listarClientes() {
 	    String sql = "SELECT c.idCliente, c.nome, c.email, c.telefone, c.endereco, c.tipoCliente, c.dataCadastro, "
