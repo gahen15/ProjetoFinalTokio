@@ -323,11 +323,12 @@ public class Main {
 
         // Adicionando a tabela dentro de um JScrollPane
         JScrollPane scrollPaneClientes = new JScrollPane(tableClientes);
-        scrollPaneClientes.setBounds(10, 49, 526, 521);
+        scrollPaneClientes.setBounds(10, 49, 720, 521);
         listaClientes.add(scrollPaneClientes);
 
         // Criando os componentes de pesquisa
         JTextField txtPesquisar = new JTextField();
+        txtPesquisar.setToolTipText("Digite o id, CPF ou CNPJ do cliente");
         txtPesquisar.setBounds(10, 10, 200, 30);
         listaClientes.add(txtPesquisar);
 
@@ -682,7 +683,7 @@ public class Main {
 		cadastroFisicaPanel.setOpaque(false);
 		cadastroFisicaPanel.setLayout(null);
 		JLabel lblCadastroFisica = new JLabel("CADASTRO FÍSICO");
-		lblCadastroFisica.setForeground(new Color(255, 255, 255));
+		lblCadastroFisica.setForeground(new Color(0, 0, 0));
 		lblCadastroFisica.setFont(new Font("Segoe UI", Font.BOLD, 50));
 		lblCadastroFisica.setBounds(299, 11, 442, 47);
 		cadastroFisicaPanel.add(lblCadastroFisica);
@@ -876,7 +877,7 @@ public class Main {
 
 		JButton btnApolices = new JButton("");
 		btnApolices.setToolTipText("Apolices");
-		btnApolices.setIcon(new ImageIcon(Main.class.getResource("/resources/images/Homebotão.png")));
+		btnApolices.setIcon(new ImageIcon(Main.class.getResource("/resources/images/apolicesbutton.png")));
 		btnApolices.setBounds(37, 164, 105, 100);
 		frame.getContentPane().add(btnApolices);
 
