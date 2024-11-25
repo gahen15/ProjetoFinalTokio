@@ -116,7 +116,7 @@ public class Main {
         JLabel lblApolices = new JLabel("APÓLICES");
         lblApolices.setForeground(new Color(0, 0, 0));
         lblApolices.setFont(new Font("Segoe UI", Font.BOLD, 50));
-        lblApolices.setBounds(434, 58, 232, 67);
+        lblApolices.setBounds(434, 58, 351, 67);
         apolicesPanel.add(lblApolices);
 
         // Adicionando ao conteúdo
