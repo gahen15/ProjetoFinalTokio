@@ -940,7 +940,20 @@ public class Main {
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				cardLayout.show(contentPanel, "Cadastro");
-				 
+				nomeField.setText("");
+				emailField.setText("");
+				telefoneField.setText("");
+				enderecoField.setText("");
+				cpfField.setText("");
+				profissaoField.setText("");
+				dataField.setText("");
+				nomeFieldJuridica.setText("");
+				emailFieldJuridica.setText("");
+				telefoneFieldJuridica.setText("");
+				enderecoFieldJuridica.setText("");
+				cnpjFieldJuridica.setText("");
+				nomeFantasiaFieldJuridica.setText("");
+				razaoSocialFieldJuridica.setText("");
 			}
 		});
 

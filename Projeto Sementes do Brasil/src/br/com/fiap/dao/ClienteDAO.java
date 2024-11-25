@@ -192,50 +192,58 @@ public class ClienteDAO {
      * @param id ID do cliente a ser deletado.
      */
 	public void deletarCliente(long id) {
-		String deleteApolicesSql = "DELETE FROM ClienteApolice WHERE idCliente = ?";
-		String deleteApoliceSql = "DELETE FROM T_Apolice WHERE idCliente = ?";
-		String deletePessoaFisicaSql = "DELETE FROM T_PessoaFisica WHERE idCliente = ?";
-		String deleteEmpresaSql = "DELETE FROM T_Empresa WHERE idCliente = ?";
-		String deleteClienteSql = "DELETE FROM T_Cliente WHERE idCliente = ?";
+	    String deleteApolicesSql = "DELETE FROM ClienteApolice WHERE idCliente = ?";
+	    String deleteApoliceSql = "DELETE FROM T_Apolice WHERE idCliente = ?";
+	    String deletePessoaFisicaSql = "DELETE FROM T_PessoaFisica WHERE idCliente = ?";
+	    String deleteEmpresaSql = "DELETE FROM T_Empresa WHERE idCliente = ?";
+	    String deleteClienteSeguroSql = "DELETE FROM ClienteSeguro WHERE idCliente = ?";  // Novo DELETE
+	    String deleteClienteSql = "DELETE FROM T_Cliente WHERE idCliente = ?";
 
-		try {
-			// Excluir apólices associadas ao cliente na tabela ClienteApolice
-			try (PreparedStatement apolicesStmt = connection.prepareStatement(deleteApolicesSql)) {
-				apolicesStmt.setLong(1, id);
-				apolicesStmt.executeUpdate();
-			}
+	    try {
+	        // Excluir apólices associadas ao cliente na tabela ClienteApolice
+	        try (PreparedStatement apolicesStmt = connection.prepareStatement(deleteApolicesSql)) {
+	            apolicesStmt.setLong(1, id);
+	            apolicesStmt.executeUpdate();
+	        }
 
-			// Excluir apólices na tabela T_Apolice, se existirem
-			try (PreparedStatement apoliceStmt = connection.prepareStatement(deleteApoliceSql)) {
-				apoliceStmt.setLong(1, id);
-				apoliceStmt.executeUpdate();
-			}
+	        // Excluir apólices na tabela T_Apolice, se existirem
+	        try (PreparedStatement apoliceStmt = connection.prepareStatement(deleteApoliceSql)) {
+	            apoliceStmt.setLong(1, id);
+	            apoliceStmt.executeUpdate();
+	        }
 
-			// Excluir registros de Pessoa Física, se existir
-			try (PreparedStatement pfStmt = connection.prepareStatement(deletePessoaFisicaSql)) {
-				pfStmt.setLong(1, id);
-				pfStmt.executeUpdate();
-			}
+	        // Excluir registros de Pessoa Física, se existir
+	        try (PreparedStatement pfStmt = connection.prepareStatement(deletePessoaFisicaSql)) {
+	            pfStmt.setLong(1, id);
+	            pfStmt.executeUpdate();
+	        }
 
-			// Excluir registros de Empresa, se existir
-			try (PreparedStatement empStmt = connection.prepareStatement(deleteEmpresaSql)) {
-				empStmt.setLong(1, id);
-				empStmt.executeUpdate();
-			}
+	        // Excluir registros de Empresa, se existir
+	        try (PreparedStatement empStmt = connection.prepareStatement(deleteEmpresaSql)) {
+	            empStmt.setLong(1, id);
+	            empStmt.executeUpdate();
+	        }
 
-			// Excluir o Cliente de T_Cliente
-			try (PreparedStatement clienteStmt = connection.prepareStatement(deleteClienteSql)) {
-				clienteStmt.setLong(1, id);
-				int affectedRows = clienteStmt.executeUpdate();
+	        // Excluir registros do Cliente na tabela ClienteSeguro
+	        try (PreparedStatement clienteSeguroStmt = connection.prepareStatement(deleteClienteSeguroSql)) {
+	            clienteSeguroStmt.setLong(1, id);
+	            clienteSeguroStmt.executeUpdate();
+	        }
 
-				if (affectedRows == 0) {
-					throw new RuntimeException("Nenhum cliente encontrado com o ID: " + id);
-				}
-			}
-		} catch (SQLException e) {
-			throw new RuntimeException("Erro ao deletar cliente", e);
-		}
+	        // Excluir o Cliente de T_Cliente
+	        try (PreparedStatement clienteStmt = connection.prepareStatement(deleteClienteSql)) {
+	            clienteStmt.setLong(1, id);
+	            int affectedRows = clienteStmt.executeUpdate();
+
+	            if (affectedRows == 0) {
+	                throw new RuntimeException("Nenhum cliente encontrado com o ID: " + id);
+	            }
+	        }
+	    } catch (SQLException e) {
+	        throw new RuntimeException("Erro ao deletar cliente", e);
+	    }
 	}
+
 	/**
      * Lista todos os clientes cadastrados no banco de dados.
      * Inclui clientes do tipo Pessoa Física e Jurídica.
@@ -243,68 +251,72 @@ public class ClienteDAO {
      * @return Lista de objetos Cliente, que podem ser Pessoa Física ou Jurídica.
      */
 	public List<Cliente> listarClientes() {
-		String sql = "SELECT c.idCliente, c.nome, c.email, c.telefone, c.endereco, c.tipoCliente, c.dataCadastro, "
-				+ "pf.cpf, pf.estadoCivil, pf.profissao, pf.dataNascimento, emp.cnpj, emp.nomeFantasia, emp.razaoSocial "
-				+ "FROM T_Cliente c " + "LEFT JOIN T_PessoaFisica pf ON c.idCliente = pf.idCliente "
-				+ "LEFT JOIN T_Empresa emp ON c.idCliente = emp.idCliente";
+	    String sql = "SELECT c.idCliente, c.nome, c.email, c.telefone, c.endereco, c.tipoCliente, c.dataCadastro, "
+	            + "pf.cpf, pf.estadoCivil, pf.profissao, pf.dataNascimento, emp.cnpj, emp.nomeFantasia, emp.razaoSocial "
+	            + "FROM T_Cliente c "
+	            + "LEFT JOIN T_PessoaFisica pf ON c.idCliente = pf.idCliente "
+	            + "LEFT JOIN T_Empresa emp ON c.idCliente = emp.idCliente";
 
-		List<Cliente> clientes = new ArrayList<>();
+	    List<Cliente> clientes = new ArrayList<>();
 
-		try (PreparedStatement stmt = connection.prepareStatement(sql); ResultSet rs = stmt.executeQuery()) {
-			while (rs.next()) {
-				long idCliente = rs.getLong("idCliente");
-				String nome = rs.getString("nome");
-				String email = rs.getString("email");
-				String telefone = rs.getString("telefone");
-				String endereco = rs.getString("endereco");
-				String tipoCliente = rs.getString("tipoCliente");
-				Date dataCadastro = rs.getDate("dataCadastro");
+	    try (PreparedStatement stmt = connection.prepareStatement(sql); ResultSet rs = stmt.executeQuery()) {
+	        while (rs.next()) {
+	            long idCliente = rs.getLong("idCliente");
+	            String nome = rs.getString("nome");
+	            String email = rs.getString("email");
+	            String telefone = rs.getString("telefone");
+	            String endereco = rs.getString("endereco");
+	            String tipoCliente = rs.getString("tipoCliente");
+	            Date dataCadastro = rs.getDate("dataCadastro");
 
-				// Verifica se é Pessoa Física ou Empresa
-				if ("FISICA".equals(tipoCliente)) {
-					String cpf = rs.getString("cpf");
-					String estadoCivil = rs.getString("estadoCivil");
-					String profissao = rs.getString("profissao");
-					Date dataNascimento = rs.getDate("dataNascimento"); // Lendo a data de nascimento
+	            // Verifica se é Pessoa Física ou Empresa
+	            if ("FISICA".equals(tipoCliente)) {
+	                String cpf = rs.getString("cpf");
+	                String estadoCivil = rs.getString("estadoCivil");
+	                String profissao = rs.getString("profissao");
+	                Date dataNascimento = rs.getDate("dataNascimento");
 
-					PessoaFisica pessoaFisica = new PessoaFisica();
-					pessoaFisica.setIdCliente(idCliente);
-					pessoaFisica.setNome(nome);
-					pessoaFisica.setEmail(email);
-					pessoaFisica.setTelefone(telefone);
-					pessoaFisica.setEndereco(endereco);
-					pessoaFisica.setDataCadastro(dataCadastro);
-					pessoaFisica.setCpf(cpf);
-					pessoaFisica.setEstadoCivil(EstadoCivil.valueOf(estadoCivil));
-					pessoaFisica.setProfissao(profissao);
-					pessoaFisica.setDataNascimento(dataNascimento); // Setando a data de nascimento
+	                PessoaFisica pessoaFisica = new PessoaFisica();
+	                pessoaFisica.setIdCliente(idCliente);
+	                pessoaFisica.setNome(nome);
+	                pessoaFisica.setEmail(email);
+	                pessoaFisica.setTelefone(telefone);
+	                pessoaFisica.setEndereco(endereco);
+	                pessoaFisica.setDataCadastro(dataCadastro);
+	                pessoaFisica.setCpf(cpf);
+	                if (estadoCivil != null && !estadoCivil.isEmpty()) {
+	                    pessoaFisica.setEstadoCivil(EstadoCivil.valueOf(estadoCivil)); // Atribui estado civil somente se não for nulo
+	                }
+	                pessoaFisica.setProfissao(profissao);
+	                pessoaFisica.setDataNascimento(dataNascimento);
 
-					clientes.add(pessoaFisica);
-				} else if ("JURIDICA".equals(tipoCliente)) {
-					String cnpj = rs.getString("cnpj");
-					String nomeFantasia = rs.getString("nomeFantasia");
-					String razaoSocial = rs.getString("razaoSocial");
+	                clientes.add(pessoaFisica);
+	            } else if ("JURIDICA".equals(tipoCliente)) {
+	                String cnpj = rs.getString("cnpj");
+	                String nomeFantasia = rs.getString("nomeFantasia");
+	                String razaoSocial = rs.getString("razaoSocial");
 
-					Empresa empresa = new Empresa();
-					empresa.setIdCliente(idCliente);
-					empresa.setNome(nome);
-					empresa.setEmail(email);
-					empresa.setTelefone(telefone);
-					empresa.setEndereco(endereco);
-					empresa.setDataCadastro(dataCadastro);
-					empresa.setCnpj(cnpj);
-					empresa.setNomeFantasia(nomeFantasia);
-					empresa.setRazaoSocial(razaoSocial);
+	                Empresa empresa = new Empresa();
+	                empresa.setIdCliente(idCliente);
+	                empresa.setNome(nome);
+	                empresa.setEmail(email);
+	                empresa.setTelefone(telefone);
+	                empresa.setEndereco(endereco);
+	                empresa.setDataCadastro(dataCadastro);
+	                empresa.setCnpj(cnpj);
+	                empresa.setNomeFantasia(nomeFantasia);
+	                empresa.setRazaoSocial(razaoSocial);
 
-					clientes.add(empresa);
-				}
-			}
-		} catch (SQLException e) {
-			throw new RuntimeException("Erro ao listar clientes", e);
-		}
+	                clientes.add(empresa);
+	            }
+	        }
+	    } catch (SQLException e) {
+	        throw new RuntimeException("Erro ao listar clientes", e);
+	    }
 
-		return clientes;
+	    return clientes;
 	}
+	
 	 /**
      * Busca um cliente pelo seu ID no banco de dados.
      * 
